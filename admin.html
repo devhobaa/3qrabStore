@@ -1,0 +1,2792 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>لوحة تحكم الأدمن - AQRAB</title>
+  <link rel="icon" type="image/x-icon" href="logo.ico">
+   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script>
+    // إخفاء تحذيرات Tailwind CSS في الكونسول
+    tailwind.config = {
+      corePlugins: {
+        preflight: false,
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- SheetJS library for Excel export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * {
+      font-family: 'Cairo', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+
+    /* Loader Styles */
+    .auth-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid #ffffff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .fade-out {
+      animation: fadeOut 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .main-content {
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+    }
+
+    .main-content.show {
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+
+  </style>
+</head>
+<body class="bg-white text-black min-h-screen">
+
+  <!-- Auth Loader -->
+  <div id="authLoader" class="auth-loader">
+    <div class="text-center">
+      <div class="spinner mx-auto mb-4"></div>
+      <h2 class="text-white text-xl font-semibold mb-2">جاري التحقق من الصلاحيات...</h2>
+      <p class="text-white/80 text-sm">يرجى الانتظار</p>
+    </div>
+  </div>
+
+
+
+  <!-- Main Content -->
+  <div id="mainContent" class="main-content">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-gray-900 to-black text-white shadow-2xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-chart-line text-white text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-bold">لوحة تحكم AQRAB</h1>
+            <p class="text-gray-300 text-sm">إدارة الطلبات والكوبونات</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="notificationBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2" title="تفعيل الإشعارات">
+            <i class="fa-solid fa-bell"></i>
+            <span class="hidden lg:inline">الإشعارات</span>
+          </button>
+          <a href="index.html" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <i class="fa-solid fa-home"></i>
+            <span class="hidden lg:inline">الموقع</span>
+          </a>
+          <a href="coupons-admin.html" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <i class="fa-solid fa-ticket"></i>
+            <span class="hidden lg:inline">الكوبونات</span>
+          </a>
+          <button id="returnsTab" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <i class="fa-solid fa-undo"></i>
+            <span class="hidden lg:inline">المرتجعات</span>
+            <span id="returnsTabWarning" class="hidden ml-1 text-yellow-300">
+              <i class="fa-solid fa-exclamation-triangle text-xs"></i>
+            </span>
+          </button>
+          <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span class="hidden lg:inline">خروج</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- إشعار الصلاحيات -->
+  <div id="permissionsAlert" class="hidden bg-yellow-50 border-l-4 border-yellow-400 p-4 mx-4 mt-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <i class="fa-solid fa-exclamation-triangle text-yellow-400"></i>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm text-yellow-700">
+          <strong>تحذير:</strong> بعض الميزات غير متاحة بسبب صلاحيات Firebase.
+          <span class="underline cursor-pointer" onclick="togglePermissionsHelp()">اعرض التفاصيل</span>
+        </p>
+        <div id="permissionsHelp" class="hidden mt-2 text-xs text-yellow-600">
+          <p>• عداد الزوار: غير متاح</p>
+          <p>• نظام المرتجعات: غير متاح</p>
+          <p>يرجى التحقق من قواعد Firestore في وحدة تحكم Firebase</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-6 py-10">
+
+    <!-- إعدادات المنتج والنظام المالي -->
+    <div class="bg-white rounded-3xl shadow-2xl p-8 mb-10 border border-gray-100">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            <i class="fa-solid fa-cog text-blue-600"></i>
+            إعدادات المنتج والنظام المالي
+          </h2>
+          <p class="text-gray-600 text-sm mt-1">تحديد أسعار التكلفة والبيع لحساب الأرباح</p>
+        </div>
+        <button id="saveProductSettings" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+          <i class="fa-solid fa-save"></i>
+          حفظ الإعدادات
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- سعر التكلفة -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">سعر التكلفة (جنيه)</label>
+          <input type="number" id="productCost" placeholder="200" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <p class="text-xs text-gray-500">تكلفة المنتج الواحد</p>
+        </div>
+
+        <!-- سعر البيع -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">سعر البيع (جنيه)</label>
+          <input type="number" id="productPrice" placeholder="400" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <p class="text-xs text-gray-500">سعر البيع للعميل</p>
+        </div>
+
+        <!-- تكلفة الشحن -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">تكلفة الشحن (جنيه)</label>
+          <input type="number" id="shippingCost" placeholder="30" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <p class="text-xs text-gray-500">متوسط تكلفة الشحن</p>
+        </div>
+
+        <!-- مصاريف إضافية -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700">مصاريف إضافية (%)</label>
+          <input type="number" id="additionalCosts" placeholder="5" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <p class="text-xs text-gray-500">إعلانات، عمولات، إلخ</p>
+        </div>
+      </div>
+
+      <!-- معاينة الربح -->
+      <div class="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200">
+        <h3 class="font-semibold text-gray-800 mb-2">معاينة الربح لكل منتج:</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div>
+            <span class="text-gray-600">سعر البيع:</span>
+            <span id="previewSalePrice" class="font-bold text-green-600">400 جنيه</span>
+          </div>
+          <div>
+            <span class="text-gray-600">إجمالي التكلفة:</span>
+            <span id="previewTotalCost" class="font-bold text-red-600">250 جنيه</span>
+          </div>
+          <div>
+            <span class="text-gray-600">صافي الربح:</span>
+            <span id="previewNetProfit" class="font-bold text-blue-600">150 جنيه</span>
+          </div>
+          <div>
+            <span class="text-gray-600">هامش الربح:</span>
+            <span id="previewProfitMargin" class="font-bold text-purple-600">37.5%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-10">
+
+  <!-- إجمالي الطلبات -->
+  <div class="bg-white rounded-2xl p-6 shadow-md border-r-4 border-blue-500">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-xs font-semibold mb-1">إجمالي الطلبات</p>
+        <p id="totalOrders" class="text-3xl font-bold text-gray-800 mb-1">0</p>
+        <p class="text-gray-400 text-xs">جميع الطلبات</p>
+      </div>
+      <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+        <i class="fa-solid fa-shopping-cart text-blue-600 text-xl"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- طلبات اليوم -->
+  <div class="bg-white rounded-2xl p-6 shadow-md border-r-4 border-green-500">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-xs font-semibold mb-1">طلبات اليوم</p>
+        <p id="todayOrders" class="text-3xl font-bold text-gray-800 mb-1">0</p>
+        <p class="text-gray-400 text-xs">اليوم</p>
+      </div>
+      <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+        <i class="fa-solid fa-calendar-day text-green-600 text-xl"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- قيد المعالجة -->
+  <div class="bg-white rounded-2xl p-6 shadow-md border-r-4 border-orange-500">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-xs font-semibold mb-1">قيد المعالجة</p>
+        <p id="pendingOrders" class="text-3xl font-bold text-gray-800 mb-1">0</p>
+        <p class="text-gray-400 text-xs">في الانتظار</p>
+      </div>
+      <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
+        <i class="fa-solid fa-clock text-orange-600 text-xl"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- مكتملة -->
+  <div class="bg-white rounded-2xl p-6 shadow-md border-r-4 border-purple-500">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-xs font-semibold mb-1">مكتملة</p>
+        <p id="completedOrders" class="text-3xl font-bold text-gray-800">0</p>
+      </div>
+      <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
+        <i class="fa-solid fa-check-circle text-purple-600 text-xl"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- زوار الموقع -->
+  <div class="bg-white rounded-2xl p-6 shadow-md border-r-4 border-pink-500">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-gray-500 text-xs font-semibold mb-1">زوار الموقع</p>
+        <p id="totalVisitors" class="text-3xl font-bold text-gray-800">0</p>
+      </div>
+      <div class="w-12 h-12 bg-pink-50 rounded-xl flex items-center justify-center">
+        <i class="fa-solid fa-users text-pink-600 text-xl"></i>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+    <!-- الإحصائيات المالية -->
+<div class="bg-white rounded-3xl shadow-2xl p-8 mb-10 border border-gray-100">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+        <i class="fa-solid fa-chart-line text-green-600"></i>
+        الإحصائيات المالية والأرباح
+      </h2>
+      <p class="text-gray-600 text-sm mt-1">تحليل مفصل للأرباح والمبيعات</p>
+    </div>
+    <button id="refreshFinancials" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+      <i class="fa-solid fa-refresh"></i>
+      تحديث
+    </button>
+  </div>
+
+  <!-- كاردات الأرباح -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- الربح اليومي -->
+    <div class="bg-gradient-to-br from-green-500 via-green-600 to-green-700 text-white rounded-3xl p-6 shadow-2xl transform hover:scale-105 transition-all duration-500">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-green-100 text-xs font-semibold mb-1 uppercase tracking-wide">الربح اليومي</p>
+          <p id="dailyProfit" class="text-3xl font-bold mb-1">0 جنيه</p>
+          <p class="text-green-200 text-xs">اليوم</p>
+        </div>
+        <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-calendar-day text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- الربح الشهري -->
+    <div class="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white rounded-3xl p-6 shadow-2xl transform hover:scale-105 transition-all duration-500">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-blue-100 text-xs font-semibold mb-1 uppercase tracking-wide">الربح الشهري</p>
+          <p id="monthlyProfit" class="text-3xl font-bold mb-1">0 جنيه</p>
+          <p class="text-blue-200 text-xs">هذا الشهر</p>
+        </div>
+        <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-calendar text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- الربح السنوي -->
+    <div class="bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 text-white rounded-3xl p-6 shadow-2xl transform hover:scale-105 transition-all duration-500">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-purple-100 text-xs font-semibold mb-1 uppercase tracking-wide">الربح السنوي</p>
+          <p id="yearlyProfit" class="text-3xl font-bold mb-1">0 جنيه</p>
+          <p class="text-purple-200 text-xs">هذا العام</p>
+        </div>
+        <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-chart-bar text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- إجمالي الأرباح -->
+    <div class="bg-gradient-to-br from-yellow-500 via-yellow-600 to-yellow-700 text-white rounded-3xl p-6 shadow-2xl transform hover:scale-105 transition-all duration-500">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-yellow-100 text-xs font-semibold mb-1 uppercase tracking-wide">إجمالي الأرباح</p>
+          <p id="totalProfit" class="text-3xl font-bold mb-1">0 جنيه</p>
+          <p class="text-yellow-200 text-xs">كل الأوقات</p>
+        </div>
+        <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-coins text-xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- تفاصيل مالية إضافية -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- إجمالي المبيعات -->
+    <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200">
+      <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-money-bill-wave text-green-600"></i>
+        إجمالي المبيعات
+      </h3>
+      <div class="space-y-3">
+        <div class="flex justify-between">
+          <span class="text-gray-600">اليوم:</span>
+          <span id="dailySales" class="font-bold text-green-600">0 جنيه</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">الشهر:</span>
+          <span id="monthlySales" class="font-bold text-blue-600">0 جنيه</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">السنة:</span>
+          <span id="yearlySales" class="font-bold text-purple-600">0 جنيه</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- إجمالي التكاليف -->
+    <div class="bg-gradient-to-r from-red-50 to-red-100 rounded-2xl p-6 border border-red-200">
+      <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-receipt text-red-600"></i>
+        إجمالي التكاليف
+      </h3>
+      <div class="space-y-3">
+        <div class="flex justify-between">
+          <span class="text-gray-600">اليوم:</span>
+          <span id="dailyCosts" class="font-bold text-red-600">0 جنيه</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">الشهر:</span>
+          <span id="monthlyCosts" class="font-bold text-red-600">0 جنيه</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">السنة:</span>
+          <span id="yearlyCosts" class="font-bold text-red-600">0 جنيه</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- هوامش الربح -->
+    <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200">
+      <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-percentage text-blue-600"></i>
+        هوامش الربح
+      </h3>
+      <div class="space-y-3">
+        <div class="flex justify-between">
+          <span class="text-gray-600">اليوم:</span>
+          <span id="dailyMargin" class="font-bold text-blue-600">0%</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">الشهر:</span>
+          <span id="monthlyMargin" class="font-bold text-blue-600">0%</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">السنة:</span>
+          <span id="yearlyMargin" class="font-bold text-blue-600">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- المرتجعات -->
+    <div data-card="returns" class="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl p-6 shadow-lg transform hover:scale-105 transition-all duration-300">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-red-100 text-sm font-medium">المرتجعات</p>
+          <p id="totalReturns" class="text-3xl font-bold">0</p>
+        </div>
+        <div class="w-12 h-12 bg-red-400 rounded-xl flex items-center justify-center">
+          <i class="fa-solid fa-undo text-xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- قسم الطلبات -->
+    <div id="ordersSection">
+      <!-- Controls -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            <i class="fa-solid fa-list text-blue-600"></i>
+            قائمة الطلبات
+          </h2>
+          <p class="text-gray-600 text-sm mt-1">إدارة ومتابعة جميع الطلبات</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          <div class="relative">
+            <input type="text" id="searchInput" placeholder="البحث في الطلبات..." class="pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-64">
+            <i class="fa-solid fa-search absolute left-3 top-4 text-gray-400"></i>
+          </div>
+
+          <button id="refreshOrders" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 shadow-lg">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            تحديث
+          </button>
+
+          <button id="exportData" class="border-2 border-green-200 hover:border-green-300 hover:bg-green-50 text-green-700 px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+            <i class="fa-solid fa-file-excel"></i>
+            تصدير Excel
+          </button>
+
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
+              <th class="py-4 px-6 text-right font-semibold">
+                <i class="fa-solid fa-user ml-2"></i>
+                اسم العميل
+              </th>
+              <th class="py-4 px-6 text-right font-semibold">
+                <i class="fa-solid fa-phone ml-2"></i>
+                الهاتف
+              </th>
+              <th class="py-4 px-6 text-center font-semibold">
+                <i class="fa-solid fa-money-bill-1-wave"></i>
+                السعر
+              </th>
+              <th class="py-4 px-6 text-right font-semibold">
+                <i class="fa-solid fa-location-dot ml-2"></i>
+                العنوان
+              </th>
+              <th class="py-4 px-6 text-right font-semibold">
+                <i class="fa-solid fa-box ml-2"></i>
+                المنتج
+              </th>
+              <th class="py-4 px-6 text-center font-semibold">
+                <i class="fa-solid fa-hashtag ml-2"></i>
+                الكمية
+              </th>
+              
+              
+              <th class="py-4 px-6 text-center font-semibold">
+                <i class="fa-solid fa-ticket ml-2"></i>
+                الكوبون
+              </th>
+              <th class="py-4 px-6 text-center font-semibold">
+                <i class="fa-solid fa-percent ml-2"></i>
+                الخصم
+              </th>
+              <th class="py-4 px-6 text-center font-semibold">
+                <i class="fa-solid fa-truck ml-2"></i>
+                حالة الطلب
+              </th>
+              <th class="py-4 px-6 text-center font-semibold">
+                <i class="fa-solid fa-calendar ml-2"></i>
+                التاريخ
+              </th>
+              <th class="py-4 px-6 text-center font-semibold">
+                <i class="fa-solid fa-phone-volume ml-2"></i>
+                حالة التواصل
+              </th>
+              <th class="py-4 px-6 text-center font-semibold">
+                <i class="fa-solid fa-cog ml-2"></i>
+                إجراءات
+              </th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable">
+            <tr>
+              <td colspan="9" class="py-8 text-center text-gray-500">
+                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                <div>جارٍ تحميل البيانات...</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+
+    <!-- قسم المرتجعات -->
+    <div id="returnsSection" class="hidden">
+      <!-- عنوان القسم -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+            <i class="fa-solid fa-undo text-red-600"></i>
+            إدارة المرتجعات
+          </h2>
+          <div class="flex items-center gap-3">
+            <button id="backToOrders" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+              <i class="fa-solid fa-arrow-left"></i>
+              العودة للطلبات
+            </button>
+            <button id="refreshReturns" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+              <i class="fa-solid fa-refresh"></i>
+              تحديث
+            </button>
+            <div class="relative">
+              <input type="text" id="searchReturns" placeholder="البحث في المرتجعات..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500">
+              <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- جدول المرتجعات -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="bg-gradient-to-r from-red-800 to-red-900 text-white">
+                <th class="py-5 px-6 text-right font-semibold">
+                  <i class="fa-solid fa-user ml-2 text-red-300"></i>
+                  العميل
+                </th>
+                <th class="py-5 px-6 text-center font-semibold">
+                  <i class="fa-solid fa-phone ml-2 text-green-300"></i>
+                  الهاتف
+                </th>
+                <th class="py-5 px-6 text-right font-semibold">
+                  <i class="fa-solid fa-box ml-2 text-blue-300"></i>
+                  المنتج
+                </th>
+                <th class="py-5 px-6 text-right font-semibold">
+                  <i class="fa-solid fa-comment ml-2 text-yellow-300"></i>
+                  سبب الإرجاع
+                </th>
+                <th class="py-5 px-6 text-center font-semibold">
+                  <i class="fa-solid fa-money-bill ml-2 text-purple-300"></i>
+                  مبلغ الاسترداد
+                </th>
+                <th class="py-5 px-6 text-center font-semibold">
+                  <i class="fa-solid fa-flag ml-2 text-orange-300"></i>
+                  الحالة
+                </th>
+                <th class="py-5 px-6 text-center font-semibold">
+                  <i class="fa-solid fa-calendar ml-2 text-indigo-300"></i>
+                  التاريخ
+                </th>
+                <th class="py-5 px-6 text-center font-semibold">
+                  <i class="fa-solid fa-cog ml-2 text-gray-300"></i>
+                  إجراءات
+                </th>
+              </tr>
+            </thead>
+            <tbody id="returnsTable">
+              <tr>
+                <td colspan="8" class="py-8 text-center text-gray-500">
+                  <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                  <div>جارٍ تحميل البيانات...</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- نافذة تفاصيل المرتجع -->
+    <div id="returnDetailsModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl p-6 max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <i class="fa-solid fa-undo text-red-600"></i>
+            تفاصيل طلب الإرجاع
+          </h3>
+          <button id="closeReturnDetails" class="text-gray-400 hover:text-gray-600 text-2xl">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+
+        <div id="returnDetailsContent" class="space-y-4">
+          <!-- سيتم ملء المحتوى هنا -->
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-gray-200">
+          <div class="flex gap-3">
+            <button id="updateReturnNotes" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">
+              <i class="fa-solid fa-save ml-1"></i>
+              حفظ الملاحظات
+            </button>
+            <button id="closeReturnDetailsBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition">
+              إغلاق
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, query, orderBy, onSnapshot, where, Timestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDeFqpa8MtVF5r3kKLfYZdM3EgPZCs3zeI",
+    authDomain: "zamman-admin.firebaseapp.com",
+    projectId: "zamman-admin",
+    storageBucket: "zamman-admin.firebasestorage.app",
+    messagingSenderId: "910842307850",
+    appId: "1:910842307850:web:b7548b7a3323e1a19046f3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  const authLoader = document.getElementById('authLoader');
+  const mainContent = document.getElementById('mainContent');
+  let hasPermissionIssues = false;
+  let lastOrderTimestamp = null;
+  let notificationPermission = false;
+
+  // إعدادات المنتج الافتراضية
+  let productSettings = {
+    cost: 200,           // سعر التكلفة
+    price: 400,          // سعر البيع
+    shippingCost: 30,    // تكلفة الشحن
+    additionalCosts: 5   // مصاريف إضافية بالنسبة المئوية
+  };
+
+  // دالة إظهار/إخفاء تفاصيل الصلاحيات
+  window.togglePermissionsHelp = function() {
+    const help = document.getElementById('permissionsHelp');
+    help.classList.toggle('hidden');
+  }
+
+  // دالة إظهار تحذير الصلاحيات
+  function showPermissionsAlert() {
+    if (hasPermissionIssues) {
+      document.getElementById('permissionsAlert').classList.remove('hidden');
+    }
+  }
+
+  // دالة تحديث شكل زر الإشعارات
+  function updateNotificationButton() {
+    const btn = document.getElementById('notificationBtn');
+    if (!btn) return;
+
+    const icon = btn.querySelector('i');
+    const text = btn.querySelector('span');
+
+    if (Notification.permission === "granted") {
+      icon.className = 'fa-solid fa-bell';
+      btn.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2';
+      btn.title = 'الإشعارات مفعلة';
+      if (text) text.textContent = 'مفعل';
+    } else {
+      icon.className = 'fa-solid fa-bell-slash';
+      btn.className = 'bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2';
+      btn.title = 'اضغط لتفعيل الإشعارات';
+      if (text) text.textContent = 'معطل';
+    }
+  }
+
+  // دالة طلب إذن الإشعارات
+  async function requestNotificationPermission() {
+    if (!("Notification" in window)) {
+      console.warn("هذا المتصفح لا يدعم إشعارات سطح المكتب");
+      updateNotificationButton();
+      return false;
+    }
+
+    if (Notification.permission === "granted") {
+      console.log("✅ إذن الإشعارات مُمنوح بالفعل");
+      notificationPermission = true;
+      updateNotificationButton();
+      return true;
+    }
+
+    if (Notification.permission === "denied") {
+      console.warn("❌ إذن الإشعارات مرفوض");
+      updateNotificationButton();
+      showNotificationPermissionDialog();
+      return false;
+    }
+
+    // طلب الإذن
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("✅ تم منح إذن الإشعارات");
+        notificationPermission = true;
+        updateNotificationButton();
+
+        // إشعار ترحيبي
+        showWelcomeNotification();
+        return true;
+      } else {
+        console.warn("❌ تم رفض إذن الإشعارات");
+        updateNotificationButton();
+        showNotificationPermissionDialog();
+        return false;
+      }
+    } catch (error) {
+      console.error("خطأ في طلب إذن الإشعارات:", error);
+      updateNotificationButton();
+      return false;
+    }
+  }
+
+  // دالة إظهار إشعار ترحيبي
+  function showWelcomeNotification() {
+    new Notification("AQRAB Admin", {
+      body: "تم تفعيل الإشعارات بنجاح! ستصلك إشعارات عند وصول طلبات جديدة.",
+      icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌚</text></svg>",
+      badge: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔔</text></svg>",
+      tag: "welcome",
+      requireInteraction: false,
+      silent: false
+    });
+  }
+
+  // دالة إظهار حوار إعدادات الإشعارات
+  function showNotificationPermissionDialog() {
+    const dialog = document.createElement('div');
+    dialog.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+    dialog.innerHTML = `
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
+        <div class="text-center mb-6">
+          <div class="text-6xl mb-4">🔔</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">تفعيل الإشعارات</h3>
+          <p class="text-gray-600 text-sm">لتلقي إشعارات فورية عند وصول طلبات جديدة</p>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h4 class="font-semibold text-blue-900 mb-2">كيفية تفعيل الإشعارات:</h4>
+          <ol class="text-sm text-blue-800 space-y-1">
+            <li>1. اضغط على أيقونة القفل 🔒 في شريط العنوان</li>
+            <li>2. اختر "السماح" للإشعارات</li>
+            <li>3. أعد تحميل الصفحة</li>
+          </ol>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="this.closest('.fixed').remove()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-lg font-medium transition">
+            تخطي
+          </button>
+          <button onclick="window.location.reload()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition">
+            إعادة تحميل
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(dialog);
+  }
+
+  // دالة إنشاء إشعار طلب جديد (إشعارات الجهاز فقط)
+  function createOrderNotification(order, orderId) {
+    console.log("🔔 طلب جديد وارد:", order.name);
+
+    // تشغيل صوت الإشعار
+    playNotificationSound();
+
+    // إرسال إشعار المتصفح
+    showBrowserNotification(order, orderId);
+  }
+
+  // دالة عرض تفاصيل الطلب
+  window.viewOrderDetails = function(orderId) {
+    // البحث عن الطلب في الجدول وتمييزه
+    const rows = document.querySelectorAll('#ordersTable tr');
+    rows.forEach(row => {
+      const orderIdCell = row.querySelector('td:first-child');
+      if (orderIdCell && orderIdCell.textContent.includes(orderId.substring(0, 8).toUpperCase())) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        row.style.backgroundColor = '#fef3c7';
+        setTimeout(() => {
+          row.style.backgroundColor = '';
+        }, 3000);
+      }
+    });
+  }
+
+  // دالة إرسال إشعار المتصفح (محسّنة ومفصلة)
+  function showBrowserNotification(order, orderId) {
+    if (!notificationPermission || Notification.permission !== "granted") {
+      console.log("📵 إشعارات المتصفح غير مفعلة - يرجى تفعيلها من زر الإشعارات");
+
+      // عرض تنبيه بسيط في الكونسول
+      console.log(`%c🔔 طلب جديد من ${order.name}`, 'background: #4ade80; color: white; padding: 8px; border-radius: 4px; font-weight: bold;');
+      console.log(`📱 ${order.phone} | 💰 ${order.totalWithShipping || order.price || '400'} جنيه`);
+      return;
+    }
+
+    try {
+      // تنسيق محتوى الإشعار مع الشحن
+      const title = `🛒 AQRAB - طلب جديد من ${order.name}`;
+      const basePrice = order.totalBeforeDiscount || order.price || '400';
+      const shippingCost = order.shippingCost || productSettings.shippingCost;
+      const totalWithShipping = order.totalWithShipping || (parseFloat(basePrice) + parseFloat(shippingCost));
+      const discountText = order.discountApplied > 0 ? `\n🎟️ خصم: ${order.discountApplied} جنيه` : '';
+      const couponText = order.couponCode ? `\n🎫 كوبون: ${order.couponCode}` : '';
+
+      // تنسيق الوقت
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('ar-EG', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      const body = `⏰ ${timeString}
+📱 ${order.phone}
+📦 ${order.product || 'ساعة كربون أسود'}
+🔢 الكمية: ${order.quantity || 1}
+💰 المبلغ عند الاستلام: ${totalWithShipping} جنيه${discountText}${couponText}
+📍 ${order.address.length > 60 ? order.address.substring(0, 60) + '...' : order.address}
+
+👆 اضغط لعرض التفاصيل في لوحة التحكم`;
+
+      const notification = new Notification(title, {
+        body: body,
+        icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%234ade80' stroke='%23ffffff' stroke-width='3'/><text x='50' y='65' font-size='45' text-anchor='middle' fill='white'>⌚</text></svg>",
+        badge: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23ef4444'/><text x='50' y='65' font-size='35' text-anchor='middle' fill='white'>🛒</text></svg>",
+        tag: `aqrab-order-${orderId}`,
+        requireInteraction: true,
+        silent: false,
+        timestamp: Date.now(),
+        data: {
+          orderId: orderId,
+          orderData: order,
+          url: window.location.href,
+          timestamp: now.toISOString()
+        }
+      });
+
+      // التعامل مع النقر على الإشعار
+      notification.onclick = function(event) {
+        event.preventDefault();
+        console.log("👆 تم النقر على إشعار الطلب:", orderId);
+
+        // التركيز على النافذة أو فتحها
+        if (window.focus) {
+          window.focus();
+        }
+
+        // إذا كانت النافذة مخفية، فتح نافذة جديدة
+        if (document.hidden || document.visibilityState === 'hidden') {
+          const newWindow = window.open(window.location.href, '_blank');
+          if (newWindow) {
+            newWindow.focus();
+          }
+        }
+
+        // عرض تفاصيل الطلب مع تأخير بسيط
+        setTimeout(() => {
+          viewOrderDetails(orderId);
+        }, 800);
+
+        // إغلاق الإشعار
+        notification.close();
+      };
+
+      // التعامل مع عرض الإشعار
+      notification.onshow = function() {
+        console.log("✅ تم عرض إشعار المتصفح للطلب:", order.name);
+      };
+
+      // التعامل مع إغلاق الإشعار
+      notification.onclose = function() {
+        console.log("🔕 تم إغلاق إشعار المتصفح");
+      };
+
+      // التعامل مع أخطاء الإشعار
+      notification.onerror = function(error) {
+        console.error("❌ خطأ في إشعار المتصفح:", error);
+      };
+
+      // إغلاق الإشعار تلقائياً بعد 30 ثانية (وقت أطول للقراءة)
+      setTimeout(() => {
+        if (notification) {
+          notification.close();
+        }
+      }, 30000);
+
+      console.log("🔔 تم إرسال إشعار المتصفح المفصل للطلب:", order.name);
+
+    } catch (error) {
+      console.error("❌ خطأ في إرسال إشعار المتصفح:", error);
+
+      // عرض تنبيه احتياطي في الكونسول
+      console.log(`%c🔔 طلب جديد (احتياطي): ${order.name}`, 'background: #ef4444; color: white; padding: 8px; border-radius: 4px; font-weight: bold;');
+    }
+  }
+
+  // دالة تشغيل صوت الإشعار
+  function playNotificationSound() {
+    try {
+      // إنشاء صوت بسيط باستخدام Web Audio API
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    } catch (error) {
+      console.warn("لا يمكن تشغيل صوت الإشعار:", error);
+    }
+  }
+
+  // دوال النظام المالي
+
+  // دالة تحميل إعدادات المنتج
+  function loadProductSettings() {
+    const saved = localStorage.getItem('productSettings');
+    if (saved) {
+      productSettings = JSON.parse(saved);
+    }
+
+    // تحديث الحقول
+    document.getElementById('productCost').value = productSettings.cost;
+    document.getElementById('productPrice').value = productSettings.price;
+    document.getElementById('shippingCost').value = productSettings.shippingCost;
+    document.getElementById('additionalCosts').value = productSettings.additionalCosts;
+
+    updateProfitPreview();
+  }
+
+  // دالة التحقق من صحة البيانات
+  function validateProductSettings() {
+    const cost = parseFloat(document.getElementById('productCost').value);
+    const price = parseFloat(document.getElementById('productPrice').value);
+    const shipping = parseFloat(document.getElementById('shippingCost').value);
+    const additional = parseFloat(document.getElementById('additionalCosts').value);
+
+    const errors = [];
+
+    if (isNaN(cost) || cost < 0) {
+      errors.push("سعر التكلفة يجب أن يكون رقم موجب");
+    }
+
+    if (isNaN(price) || price <= 0) {
+      errors.push("سعر البيع يجب أن يكون رقم موجب");
+    }
+
+    if (isNaN(shipping) || shipping < 0) {
+      errors.push("تكلفة الشحن يجب أن تكون رقم موجب أو صفر");
+    }
+
+    if (isNaN(additional) || additional < 0 || additional > 100) {
+      errors.push("المصاريف الإضافية يجب أن تكون نسبة بين 0 و 100");
+    }
+
+    if (price <= cost) {
+      errors.push("سعر البيع يجب أن يكون أكبر من سعر التكلفة");
+    }
+
+    return errors;
+  }
+
+  // دالة حفظ إعدادات المنتج (محسّنة)
+  function saveProductSettings() {
+    // التحقق من صحة البيانات
+    const errors = validateProductSettings();
+
+    if (errors.length > 0) {
+      showNotification("خطأ في البيانات:\n" + errors.join("\n"), "error");
+      return;
+    }
+
+    productSettings = {
+      cost: parseFloat(document.getElementById('productCost').value),
+      price: parseFloat(document.getElementById('productPrice').value),
+      shippingCost: parseFloat(document.getElementById('shippingCost').value),
+      additionalCosts: parseFloat(document.getElementById('additionalCosts').value)
+    };
+
+    localStorage.setItem('productSettings', JSON.stringify(productSettings));
+    updateProfitPreview();
+
+    showNotification("تم حفظ إعدادات المنتج بنجاح", "success");
+
+    // إعادة حساب الإحصائيات المالية
+    calculateFinancialStats();
+
+    console.log("💾 تم حفظ إعدادات المنتج:", productSettings);
+  }
+
+  // دالة تحديث معاينة الربح (محسّنة)
+  function updateProfitPreview() {
+    const cost = parseFloat(document.getElementById('productCost').value) || productSettings.cost;
+    const price = parseFloat(document.getElementById('productPrice').value) || productSettings.price;
+    const shipping = parseFloat(document.getElementById('shippingCost').value) || productSettings.shippingCost;
+    const additional = parseFloat(document.getElementById('additionalCosts').value) || productSettings.additionalCosts;
+
+    // التحقق من صحة القيم
+    if (cost < 0 || price < 0 || shipping < 0 || additional < 0) {
+      document.getElementById('previewSalePrice').textContent = 'قيم غير صحيحة';
+      return;
+    }
+
+    // حساب التكاليف
+    const additionalCostAmount = (price * additional) / 100;
+    const totalCost = cost + shipping + additionalCostAmount;
+    const netProfit = price - totalCost;
+    const profitMargin = price > 0 ? ((netProfit / price) * 100) : 0;
+
+    // تحديث العرض مع تنسيق أفضل
+    document.getElementById('previewSalePrice').textContent = `${price.toFixed(2)} جنيه`;
+    document.getElementById('previewTotalCost').textContent = `${totalCost.toFixed(2)} جنيه`;
+
+    // تلوين الربح حسب القيمة
+    const profitElement = document.getElementById('previewNetProfit');
+    const marginElement = document.getElementById('previewProfitMargin');
+
+    profitElement.textContent = `${netProfit.toFixed(2)} جنيه`;
+    marginElement.textContent = `${profitMargin.toFixed(1)}%`;
+
+    // تغيير اللون حسب الربحية
+    if (netProfit > 0) {
+      profitElement.className = 'font-bold text-green-600';
+      marginElement.className = 'font-bold text-green-600';
+    } else if (netProfit === 0) {
+      profitElement.className = 'font-bold text-yellow-600';
+      marginElement.className = 'font-bold text-yellow-600';
+    } else {
+      profitElement.className = 'font-bold text-red-600';
+      marginElement.className = 'font-bold text-red-600';
+    }
+  }
+
+  // دالة حساب الربح لطلب واحد (محسّنة مع الشحن)
+  function calculateOrderProfit(order) {
+    const quantity = parseInt(order.quantity) || 1;
+
+    // تحديد السعر الأساسي للطلب
+    let basePrice = productSettings.price; // السعر الافتراضي
+
+    // محاولة الحصول على السعر من الطلب
+    if (order.totalWithShipping) {
+      // إذا كان هناك مبلغ إجمالي مع الشحن، استخدمه
+      basePrice = parseFloat(order.totalWithShipping);
+    } else if (order.totalBeforeDiscount) {
+      // السعر قبل الخصم + تكلفة الشحن
+      basePrice = parseFloat(order.totalBeforeDiscount) + (parseFloat(order.shippingCost) || productSettings.shippingCost);
+    } else if (order.price) {
+      // السعر + تكلفة الشحن
+      basePrice = parseFloat(order.price) + (parseFloat(order.shippingCost) || productSettings.shippingCost);
+    } else {
+      // السعر الافتراضي + تكلفة الشحن
+      basePrice = productSettings.price + productSettings.shippingCost;
+    }
+
+    // حساب الخصم المطبق
+    const discount = parseFloat(order.discountApplied) || parseFloat(order.discount) || 0;
+
+    // السعر النهائي بعد الخصم (يشمل الشحن)
+    const finalPrice = Math.max(0, basePrice - discount);
+
+    // حساب التكاليف
+    const productCost = productSettings.cost * quantity; // تكلفة المنتجات
+    const shippingCostUsed = parseFloat(order.shippingCost) || productSettings.shippingCost; // تكلفة الشحن الفعلية
+    const additionalCostAmount = ((finalPrice - shippingCostUsed) * productSettings.additionalCosts) / 100; // المصاريف الإضافية (بدون الشحن)
+
+    const totalCost = productCost + shippingCostUsed + additionalCostAmount;
+    const totalRevenue = finalPrice;
+    const profit = totalRevenue - totalCost;
+
+    // حساب هامش الربح
+    const margin = totalRevenue > 0 ? ((profit / totalRevenue) * 100) : 0;
+
+    return {
+      revenue: totalRevenue,
+      cost: totalCost,
+      profit: profit,
+      margin: margin,
+      quantity: quantity,
+      basePrice: basePrice,
+      finalPrice: finalPrice,
+      discount: discount,
+      productCost: productCost,
+      shippingCost: shippingCostUsed,
+      additionalCost: additionalCostAmount
+    };
+  }
+
+  // دالة حساب الإحصائيات المالية (محسّنة)
+  async function calculateFinancialStats() {
+    try {
+      console.log("💰 بدء حساب الإحصائيات المالية...");
+
+      const querySnapshot = await getDocs(collection(db, "orders"));
+
+      if (querySnapshot.empty) {
+        console.log("📊 لا توجد طلبات لحساب الإحصائيات");
+        updateFinancialUI(
+          { revenue: 0, cost: 0, profit: 0, orders: 0 },
+          { revenue: 0, cost: 0, profit: 0, orders: 0 },
+          { revenue: 0, cost: 0, profit: 0, orders: 0 },
+          { revenue: 0, cost: 0, profit: 0, orders: 0 }
+        );
+        return;
+      }
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const thisYear = new Date(now.getFullYear(), 0, 1);
+
+      let dailyStats = { revenue: 0, cost: 0, profit: 0, orders: 0 };
+      let monthlyStats = { revenue: 0, cost: 0, profit: 0, orders: 0 };
+      let yearlyStats = { revenue: 0, cost: 0, profit: 0, orders: 0 };
+      let totalStats = { revenue: 0, cost: 0, profit: 0, orders: 0 };
+
+      let processedOrders = 0;
+      let skippedOrders = 0;
+
+      querySnapshot.forEach((doc) => {
+        const order = doc.data();
+
+        // التحقق من وجود تاريخ صحيح
+        if (!order.date) {
+          skippedOrders++;
+          console.warn("⚠️ طلب بدون تاريخ:", doc.id);
+          return;
+        }
+
+        const orderDate = new Date(order.date);
+
+        // التحقق من صحة التاريخ
+        if (isNaN(orderDate.getTime())) {
+          skippedOrders++;
+          console.warn("⚠️ طلب بتاريخ غير صحيح:", doc.id, order.date);
+          return;
+        }
+
+        const orderProfit = calculateOrderProfit(order);
+
+        // التحقق من صحة الحسابات
+        if (isNaN(orderProfit.revenue) || isNaN(orderProfit.cost) || isNaN(orderProfit.profit)) {
+          skippedOrders++;
+          console.warn("⚠️ طلب بحسابات غير صحيحة:", doc.id);
+          return;
+        }
+
+        processedOrders++;
+
+        // إضافة للإجمالي
+        totalStats.revenue += orderProfit.revenue;
+        totalStats.cost += orderProfit.cost;
+        totalStats.profit += orderProfit.profit;
+        totalStats.orders += 1;
+
+        // إضافة للسنة الحالية
+        if (orderDate >= thisYear) {
+          yearlyStats.revenue += orderProfit.revenue;
+          yearlyStats.cost += orderProfit.cost;
+          yearlyStats.profit += orderProfit.profit;
+          yearlyStats.orders += 1;
+        }
+
+        // إضافة للشهر الحالي
+        if (orderDate >= thisMonth) {
+          monthlyStats.revenue += orderProfit.revenue;
+          monthlyStats.cost += orderProfit.cost;
+          monthlyStats.profit += orderProfit.profit;
+          monthlyStats.orders += 1;
+        }
+
+        // إضافة لليوم الحالي
+        if (orderDate >= today) {
+          dailyStats.revenue += orderProfit.revenue;
+          dailyStats.cost += orderProfit.cost;
+          dailyStats.profit += orderProfit.profit;
+          dailyStats.orders += 1;
+        }
+      });
+
+      // تحديث واجهة المستخدم
+      updateFinancialUI(dailyStats, monthlyStats, yearlyStats, totalStats);
+
+      console.log(`✅ تم حساب الإحصائيات المالية بنجاح:`);
+      console.log(`📊 تم معالجة ${processedOrders} طلب، تم تخطي ${skippedOrders} طلب`);
+
+    } catch (error) {
+      console.error("❌ خطأ في حساب الإحصائيات المالية:", error);
+      showNotification("خطأ في حساب الإحصائيات المالية", "error");
+    }
+  }
+
+  // دالة تحديث واجهة المستخدم المالية (محسّنة)
+  function updateFinancialUI(daily, monthly, yearly, total) {
+    // دالة مساعدة لتنسيق الأرقام
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('ar-EG', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(amount) + ' جنيه';
+    }
+
+    function formatPercentage(percentage) {
+      return percentage.toFixed(1) + '%';
+    }
+
+    // الأرباح مع تنسيق محسّن
+    document.getElementById('dailyProfit').textContent = formatCurrency(daily.profit);
+    document.getElementById('monthlyProfit').textContent = formatCurrency(monthly.profit);
+    document.getElementById('yearlyProfit').textContent = formatCurrency(yearly.profit);
+    document.getElementById('totalProfit').textContent = formatCurrency(total.profit);
+
+    // المبيعات
+    document.getElementById('dailySales').textContent = formatCurrency(daily.revenue);
+    document.getElementById('monthlySales').textContent = formatCurrency(monthly.revenue);
+    document.getElementById('yearlySales').textContent = formatCurrency(yearly.revenue);
+
+    // التكاليف
+    document.getElementById('dailyCosts').textContent = formatCurrency(daily.cost);
+    document.getElementById('monthlyCosts').textContent = formatCurrency(monthly.cost);
+    document.getElementById('yearlyCosts').textContent = formatCurrency(yearly.cost);
+
+    // هوامش الربح
+    const dailyMargin = daily.revenue > 0 ? ((daily.profit / daily.revenue) * 100) : 0;
+    const monthlyMargin = monthly.revenue > 0 ? ((monthly.profit / monthly.revenue) * 100) : 0;
+    const yearlyMargin = yearly.revenue > 0 ? ((yearly.profit / yearly.revenue) * 100) : 0;
+
+    document.getElementById('dailyMargin').textContent = formatPercentage(dailyMargin);
+    document.getElementById('monthlyMargin').textContent = formatPercentage(monthlyMargin);
+    document.getElementById('yearlyMargin').textContent = formatPercentage(yearlyMargin);
+
+    // إضافة معلومات إضافية في الكونسول
+    console.log("📊 الإحصائيات المالية المحدثة:");
+    console.log(`📅 اليوم: ${daily.orders} طلب، ربح ${daily.profit.toFixed(2)} جنيه`);
+    console.log(`📅 الشهر: ${monthly.orders} طلب، ربح ${monthly.profit.toFixed(2)} جنيه`);
+    console.log(`📅 السنة: ${yearly.orders} طلب، ربح ${yearly.profit.toFixed(2)} جنيه`);
+    console.log(`📅 الإجمالي: ${total.orders} طلب، ربح ${total.profit.toFixed(2)} جنيه`);
+  }
+
+  // دالة تهيئة المجموعات المطلوبة
+  async function initializeCollections() {
+    try {
+      // محاولة إنشاء مجموعة visitors إذا لم تكن موجودة
+      const visitorsRef = collection(db, "visitors");
+      const visitorsSnapshot = await getDocs(visitorsRef);
+
+      // محاولة إنشاء مجموعة returns إذا لم تكن موجودة
+      const returnsRef = collection(db, "returns");
+      const returnsSnapshot = await getDocs(returnsRef);
+
+      console.log("✅ تم التحقق من المجموعات بنجاح");
+    } catch (error) {
+      console.warn("⚠️ تحذير: بعض المجموعات غير متاحة:", error.message);
+    }
+  }
+
+  // التحقق من حالة تسجيل الدخول
+  onAuthStateChanged(auth, (user) => {
+    setTimeout(async () => {
+      if (!user) {
+        // المستخدم غير مسجل دخول - توجيه لصفحة تسجيل الدخول
+        window.location.href = "login.html";
+      } else {
+        // المستخدم مسجل دخول - إخفاء اللودر وإظهار المحتوى
+        authLoader.classList.add('fade-out');
+        setTimeout(async () => {
+          authLoader.classList.add('hidden');
+          mainContent.classList.add('show');
+
+          // تهيئة المجموعات
+          await initializeCollections();
+
+          // طلب إذن الإشعارات
+          await requestNotificationPermission();
+
+          // تحميل إعدادات المنتج
+          loadProductSettings();
+
+          // بدء مراقبة الطلبات الجديدة
+          startOrdersListener();
+        }, 500);
+      }
+    }, 1000); // إظهار اللودر لثانية واحدة على الأقل
+  });
+
+  // زر تسجيل الخروج
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    if (confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+      signOut(auth).then(() => {
+        localStorage.removeItem('rememberAdmin');
+        window.location.href = "login.html";
+      }).catch((error) => {
+        console.error("خطأ في تسجيل الخروج:", error);
+        // في حالة الخطأ، إعادة توجيه مباشرة
+        window.location.href = "login.html";
+      });
+    }
+  });
+
+  // دالة مراقبة الطلبات الجديدة
+  function startOrdersListener() {
+    try {
+      console.log("🔔 بدء مراقبة الطلبات الجديدة...");
+
+      // إعداد الاستعلام للطلبات مرتبة حسب التاريخ
+      const ordersQuery = query(
+        collection(db, "orders"),
+        orderBy("date", "desc")
+      );
+
+      // مراقبة التغييرات في الوقت الفعلي
+      const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            const order = change.doc.data();
+            const orderId = change.doc.id;
+            const orderTimestamp = new Date(order.date).getTime();
+
+            // التحقق من أن هذا طلب جديد وليس تحميل أولي
+            if (lastOrderTimestamp === null) {
+              // أول تحميل - حفظ آخر طلب فقط
+              lastOrderTimestamp = orderTimestamp;
+              console.log("📊 تم تهيئة مراقب الطلبات");
+            } else if (orderTimestamp > lastOrderTimestamp) {
+              // طلب جديد!
+              console.log("🆕 طلب جديد تم اكتشافه:", order.name);
+              createOrderNotification(order, orderId);
+              lastOrderTimestamp = orderTimestamp;
+
+              // تحديث الإحصائيات
+              setTimeout(() => {
+                loadOrders();
+              }, 1000);
+            }
+          }
+        });
+      }, (error) => {
+        console.error("❌ خطأ في مراقبة الطلبات:", error);
+
+        // إعادة المحاولة بعد 5 ثوان
+        setTimeout(() => {
+          console.log("🔄 إعادة محاولة مراقبة الطلبات...");
+          startOrdersListener();
+        }, 5000);
+      });
+
+      // حفظ دالة إلغاء الاشتراك
+      window.unsubscribeOrders = unsubscribe;
+
+    } catch (error) {
+      console.error("❌ خطأ في بدء مراقبة الطلبات:", error);
+    }
+  }
+
+  // ترجمة حالات الطلبات
+  const statusTranslations = {
+    'pending': 'قيد التحضير',
+    'shipped': 'تم الشحن',
+    'on_the_way': 'في الطريق',
+    'delivered': 'تم التوصيل',
+    'received': 'تم الاستلام'
+  };
+
+  const statusColors = {
+    'pending': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    'shipped': 'bg-blue-100 text-blue-800 border-blue-200',
+    'on_the_way': 'bg-purple-100 text-purple-800 border-purple-200',
+    'delivered': 'bg-green-100 text-green-800 border-green-200',
+    'received': 'bg-gray-100 text-gray-800 border-gray-200'
+  };
+
+  // تحديث حالة الطلب
+  async function updateOrderStatus(orderId, newStatus) {
+    try {
+      await updateDoc(doc(db, "orders", orderId), {
+        status: newStatus
+      });
+      showNotification("تم تحديث حالة الطلب بنجاح", "success");
+      loadOrders(); // إعادة تحميل البيانات
+    } catch (error) {
+      console.error("خطأ في تحديث الحالة:", error);
+      showNotification("حدث خطأ أثناء تحديث الحالة", "error");
+    }
+  }
+
+  async function loadOrders() {
+    const tbody = document.getElementById("ordersTable");
+    const totalOrdersEl = document.getElementById("totalOrders");
+    const todayOrdersEl = document.getElementById("todayOrders");
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="11" class="py-8 text-center text-gray-500">
+          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+          <div>جاري التحميل...</div>
+        </td>
+      </tr>
+    `;
+
+    try {
+      // ترتيب الطلبات حسب التاريخ (الأحدث أولاً)
+      // في حالة عدم وجود حقل التاريخ أو كان نصي، سنقوم بالترتيب يدوياً
+      let querySnapshot;
+      try {
+        const ordersQuery = query(collection(db, "orders"), orderBy("date", "desc"));
+        querySnapshot = await getDocs(ordersQuery);
+      } catch (error) {
+        console.warn("لا يمكن ترتيب الطلبات حسب التاريخ، سيتم جلب البيانات بدون ترتيب:", error);
+        querySnapshot = await getDocs(collection(db, "orders"));
+      }
+
+      if (querySnapshot.empty) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="py-12 text-center text-gray-500">
+              <i class="fa-solid fa-inbox text-4xl mb-4 text-gray-300"></i>
+              <div class="text-lg font-medium">لا توجد طلبات حتى الآن</div>
+              <div class="text-sm">ستظهر الطلبات الجديدة هنا</div>
+            </td>
+          </tr>
+        `;
+        totalOrdersEl.textContent = "0";
+        todayOrdersEl.textContent = "0";
+        return;
+      }
+
+      tbody.innerHTML = "";
+      let todayCount = 0;
+      const today = new Date().toDateString();
+
+      // تحويل البيانات إلى مصفوفة للترتيب اليدوي
+      const ordersArray = [];
+      querySnapshot.forEach(docSnap => {
+        ordersArray.push({
+          id: docSnap.id,
+          data: docSnap.data()
+        });
+      });
+
+      // ترتيب الطلبات حسب التاريخ (الأحدث أولاً)
+      ordersArray.sort((a, b) => {
+        const dateA = new Date(a.data.date);
+        const dateB = new Date(b.data.date);
+        return dateB - dateA; // ترتيب تنازلي (الأحدث أولاً)
+      });
+
+      ordersArray.forEach(orderDoc => {
+        const docSnap = { id: orderDoc.id, data: () => orderDoc.data };
+        const order = orderDoc.data;
+        const orderDate = new Date(order.date);
+        const formattedDate = orderDate.toLocaleDateString('ar-EG', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        if (orderDate.toDateString() === today) {
+          todayCount++;
+        }
+
+        // تحديد لون الصف بناءً على حالة التواصل
+        const isContacted = order.contacted === true;
+        const rowClass = isContacted
+          ? "border-b border-black/5 hover:bg-green-50 transition-colors bg-green-50/50"
+          : "border-b border-black/5 hover:bg-gray-50 transition-colors";
+
+        tbody.innerHTML += `
+          <tr class="${rowClass}" data-order-id="${docSnap.id}">
+            <td class="py-4 px-6 text-right">
+              <div class="font-medium">${order.name || "-"}</div>
+            </td>
+            <td class="py-4 px-6 text-right">
+              <a href="tel:${order.phone}" class="text-black hover:text-gray-600 flex items-center gap-2">
+                <i class="fa-solid fa-phone text-sm"></i>
+                ${order.phone || "-"}
+              </a>
+            </td>
+            <td class="py-4 px-6 text-right">
+              <div class="font-medium">${order.price || order.totalBeforeDiscount || "400"} جنيه</div>
+              ${order.discountApplied > 0 ? `<div class="text-xs text-green-600">خصم: -${order.discountApplied} جنيه</div>` : ''}
+            </td>
+            <td class="py-4 px-6 text-right">
+              <div class="max-w-xs truncate" title="${order.address || "-"}">
+                ${order.address || "-"}
+              </div>
+            </td>
+            
+            <td class="py-4 px-6 text-right">
+              <div class="font-medium">${order.product || "-"}</div>
+            </td>
+            
+            <td class="py-4 px-6 text-center">
+              <span class="bg-black/5 px-2 py-1 rounded-lg font-medium">
+                ${order.quantity || "-"}
+              </span>
+            </td>
+            
+            <td class="py-4 px-6 text-center">
+              ${order.couponCode ?
+                `<span class="bg-green-100 text-green-800 px-2 py-1 rounded-lg text-xs font-medium">
+                  <i class="fa-solid fa-ticket ml-1"></i>
+                  ${order.couponCode}
+                </span>` :
+                `<span class="text-gray-400 text-sm">-</span>`
+              }
+            </td>
+            <td class="py-4 px-6 text-center">
+              ${order.discountApplied > 0 ?
+                `<span class="bg-red-100 text-red-800 px-2 py-1 rounded-lg text-xs font-medium">
+                  <i class="fa-solid fa-minus ml-1"></i>
+                  ${order.discountApplied} جنيه
+                </span>` :
+                `<span class="text-gray-400 text-sm">-</span>`
+              }
+            </td>
+            
+            <td class="py-4 px-6 text-center">
+              <div class="relative">
+                <select class="status-dropdown bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 ${statusColors[order.status || 'pending']}" data-order-id="${docSnap.id}" data-current-status="${order.status || 'pending'}">
+                  <option value="pending" ${(order.status || 'pending') === 'pending' ? 'selected' : ''}>قيد التحضير</option>
+                  <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>تم الشحن</option>
+                  <option value="on_the_way" ${order.status === 'on_the_way' ? 'selected' : ''}>في الطريق</option>
+                  <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>تم التوصيل</option>
+                  <option value="received" ${order.status === 'received' ? 'selected' : ''}>تم الاستلام</option>
+                </select>
+              </div>
+            </td>
+            <td class="py-4 px-6 text-center text-sm text-gray-600">
+              ${formattedDate}
+            </td>
+            <td class="py-4 px-6 text-center">
+              <button class="contact-btn px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1 mx-auto ${isContacted
+                ? 'bg-green-100 text-green-800 border border-green-300'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'}"
+                data-order-id="${docSnap.id}"
+                data-contacted="${isContacted}">
+                <i class="fa-solid ${isContacted ? 'fa-check-circle' : 'fa-phone'}"></i>
+                ${isContacted ? 'تم التواصل' : 'تواصل'}
+              </button>
+            </td>
+            <td class="py-4 px-6 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button class="bg-black hover:bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1 whatsapp-btn" data-phone="${order.phone}" data-name="${order.name}">
+                  <i class="fa-brands fa-whatsapp"></i>
+                  واتساب
+                </button>
+                <button class="border border-red-500 hover:bg-red-500 hover:text-white text-red-500 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1 delete-btn" data-id="${docSnap.id}">
+                  <i class="fa-solid fa-trash"></i>
+                  حذف
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      // Update stats
+      totalOrdersEl.textContent = ordersArray.length;
+      todayOrdersEl.textContent = todayCount;
+
+      // تفعيل أزرار الحذف
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (confirm("هل أنت متأكد أنك تريد حذف هذا الطلب؟")) {
+            try {
+              btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحذف...';
+              btn.disabled = true;
+
+              await deleteDoc(doc(db, "orders", btn.getAttribute("data-id")));
+
+              // Show success message
+              showNotification("تم حذف الطلب بنجاح", "success");
+              loadOrders(); // إعادة التحميل بعد الحذف
+            } catch (error) {
+              console.error("خطأ في الحذف:", error);
+              showNotification("حدث خطأ أثناء الحذف", "error");
+              btn.innerHTML = '<i class="fa-solid fa-trash"></i> حذف';
+              btn.disabled = false;
+            }
+          }
+        });
+      });
+
+      // تفعيل أزرار واتساب
+      document.querySelectorAll(".whatsapp-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const phone = btn.getAttribute("data-phone");
+          const name = btn.getAttribute("data-name");
+          const message = encodeURIComponent(`مرحباً ${name}، نشكرك على ثقتك في 3qrab. سيتم التواصل معك في أقرب وقت لتأكيد تفاصيل طلبك.`);
+          const whatsappUrl = `https://wa.me/${phone.replace('+', '')}?text=${message}`;
+          window.open(whatsappUrl, '_blank');
+        });
+      });
+
+      // تفعيل أزرار التواصل
+      document.querySelectorAll(".contact-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const orderId = btn.getAttribute("data-order-id");
+          const isCurrentlyContacted = btn.getAttribute("data-contacted") === "true";
+          const newContactedStatus = !isCurrentlyContacted;
+
+          try {
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحديث...';
+            btn.disabled = true;
+
+            // تحديث حالة التواصل في قاعدة البيانات
+            await updateDoc(doc(db, "orders", orderId), {
+              contacted: newContactedStatus,
+              contactedAt: newContactedStatus ? new Date().toISOString() : null
+            });
+const row = btn.closest('tr');
+if (newContactedStatus) {
+  // تعديل الزر
+  btn.className =
+    'contact-btn px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1 mx-auto bg-green-100 text-green-800 border border-green-300';
+  btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> تم التواصل';
+
+  // جعل الصف أخضر دائمًا
+  row.className =
+    'border-b border-black/5 bg-green-100'; 
+} else {
+  // تعديل الزر
+  btn.className =
+    'contact-btn px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1 mx-auto bg-blue-600 hover:bg-blue-700 text-white';
+  btn.innerHTML = '<i class="fa-solid fa-phone"></i> تواصل';
+
+  // الصف يرجع عادي
+  row.className =
+    'border-b border-black/5 hover:bg-gray-50 transition-colors';
+}
+
+btn.setAttribute("data-contacted", newContactedStatus.toString());
+btn.disabled = false;
+
+            showNotification(newContactedStatus ? "تم تحديث حالة التواصل" : "تم إلغاء حالة التواصل", "success");
+          } catch (error) {
+            console.error("خطأ في تحديث حالة التواصل:", error);
+            showNotification("حدث خطأ أثناء تحديث حالة التواصل", "error");
+            btn.disabled = false;
+            // إعادة النص الأصلي
+            btn.innerHTML = isCurrentlyContacted
+              ? '<i class="fa-solid fa-check-circle"></i> تم التواصل'
+              : '<i class="fa-solid fa-phone"></i> تواصل';
+          }
+        });
+      });
+
+      // تفعيل القوائم المنسدلة لتحديث حالة الطلب
+      document.querySelectorAll(".status-dropdown").forEach(dropdown => {
+        dropdown.addEventListener("change", async (e) => {
+          const orderId = e.target.getAttribute("data-order-id");
+          const newStatus = e.target.value;
+          const currentStatus = e.target.getAttribute("data-current-status");
+
+          if (newStatus !== currentStatus) {
+            // تحديث الألوان فوراً
+            e.target.className = `status-dropdown bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 ${statusColors[newStatus]}`;
+
+            // تحديث قاعدة البيانات
+            await updateOrderStatus(orderId, newStatus);
+
+            // تحديث البيانات المحفوظة
+            e.target.setAttribute("data-current-status", newStatus);
+          }
+        });
+      });
+
+    } catch (error) {
+      console.error("خطأ في جلب البيانات:", error);
+
+      if (error.code === 'permission-denied') {
+        // مشكلة في الصلاحيات - عرض رسالة واضحة
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-12 text-center">
+              <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md mx-auto">
+                <i class="fa-solid fa-lock text-yellow-600 text-3xl mb-3"></i>
+                <h3 class="text-lg font-semibold text-yellow-800 mb-2">مشكلة في الصلاحيات</h3>
+                <p class="text-yellow-700 text-sm mb-4">لا يمكن الوصول إلى قاعدة البيانات. يرجى التحقق من قواعد Firebase.</p>
+                <div class="bg-yellow-100 border border-yellow-300 rounded p-3 text-xs text-yellow-800">
+                  <strong>للمطور:</strong> تحقق من قواعد Firestore في Firebase Console
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      } else {
+        // خطأ آخر
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-12 text-center text-red-500">
+              <i class="fa-solid fa-exclamation-triangle text-4xl mb-4"></i>
+              <div class="text-lg font-medium">حدث خطأ أثناء التحميل</div>
+              <div class="text-sm">يرجى المحاولة مرة أخرى</div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+  }
+
+  // Notification function
+  function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+
+    if (type === 'success') {
+      notification.className += ' bg-green-100 border border-green-200 text-green-800';
+      notification.innerHTML = `<i class="fa-solid fa-check-circle ml-2"></i>${message}`;
+    } else if (type === 'error') {
+      notification.className += ' bg-red-100 border border-red-200 text-red-800';
+      notification.innerHTML = `<i class="fa-solid fa-exclamation-circle ml-2"></i>${message}`;
+    } else {
+      notification.className += ' bg-blue-100 border border-blue-200 text-blue-800';
+      notification.innerHTML = `<i class="fa-solid fa-info-circle ml-2"></i>${message}`;
+    }
+
+    document.body.appendChild(notification);
+
+    // Animate in
+    setTimeout(() => {
+      notification.classList.remove('translate-x-full');
+    }, 100);
+
+    // Animate out and remove
+    setTimeout(() => {
+      notification.classList.add('translate-x-full');
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 3000);
+  }
+
+  // Export data function with Excel format and financial calculations
+  window.exportData = async function() {
+    try {
+      const querySnapshot = await getDocs(collection(db, "orders"));
+      if (querySnapshot.empty) {
+        showNotification("لا توجد بيانات للتصدير", "error");
+        return;
+      }
+
+      // جمع البيانات وحساب الإحصائيات
+      const orders = [];
+      let totalRevenue = 0;
+      let totalOrders = 0;
+      let totalQuantity = 0;
+      let totalDiscounts = 0;
+      let statusCounts = { pending: 0, confirmed: 0, shipped: 0, delivered: 0, cancelled: 0 };
+
+      querySnapshot.forEach(docSnap => {
+        const order = docSnap.data();
+        orders.push(order);
+
+        // حساب الإحصائيات
+        totalOrders++;
+        totalQuantity += parseInt(order.quantity) || 0;
+        totalRevenue += parseFloat(order.price) || 0;
+        totalDiscounts += parseFloat(order.discountApplied) || 0;
+
+        const status = order.status || 'pending';
+        if (statusCounts.hasOwnProperty(status)) {
+          statusCounts[status]++;
+        }
+      });
+
+      // إنشاء Workbook جديد باستخدام SheetJS
+      const wb = XLSX.utils.book_new();
+
+      // إنشاء البيانات للـ worksheet
+      const wsData = [];
+
+     
+      // رأس جدول الطلبات
+      wsData.push(['📋 تفاصيل الطلبات']);
+      wsData.push([
+        'م',
+        'اسم العميل',
+        'الهاتف',
+        'العنوان',
+        'المنتج',
+        'الكمية',
+        'سعر الوحدة',
+        'المجموع قبل الخصم',
+        'قيمة الخصم',
+        'المبلغ النهائي',
+        'كود الكوبون',
+        'الحالة',
+        'التاريخ والوقت'
+      ]);
+
+      // إضافة بيانات الطلبات
+      orders.forEach((order, index) => {
+        const orderDate = order.date ? new Date(order.date) : new Date();
+        const formattedDateTime = orderDate.toLocaleDateString('ar-EG', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        // حساب القيم المالية
+        const unitPrice = parseFloat(order.unitPrice || 400);
+        const quantity = parseInt(order.quantity || 1);
+        const totalBeforeDiscount = parseFloat(order.totalBeforeDiscount || (unitPrice * quantity));
+        const discountAmount = parseFloat(order.discountApplied || 0);
+        const finalPrice = parseFloat(order.price || (totalBeforeDiscount - discountAmount));
+
+        wsData.push([
+          index + 1,
+          order.name || '',
+          order.phone || '',
+          order.address || '',
+          order.product || 'ساعة كربون أسود — أرقام عربية',
+          quantity,
+          unitPrice,
+          totalBeforeDiscount,
+          discountAmount,
+          finalPrice,
+          order.couponCode || '-',
+          getStatusText(order.status),
+          formattedDateTime
+        ]);
+      });
+
+      // إضافة صف الإجمالي
+      wsData.push([]);
+      wsData.push([
+        '',
+        'الإجمالي النهائي',
+        '',
+        '',
+        `${totalOrders} طلب`,
+        totalQuantity,
+        '',
+        totalRevenue + totalDiscounts,
+        totalDiscounts,
+        totalRevenue,
+        '',
+        '',
+        `صافي الربح: ${(totalRevenue - totalDiscounts).toLocaleString('ar-EG')} جنيه`
+      ]);
+
+      // إنشاء worksheet
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+      // تنسيق العرض للأعمدة
+      const colWidths = [
+        { wch: 5 },  // م
+        { wch: 20 }, // اسم العميل
+        { wch: 15 }, // الهاتف
+        { wch: 40 }, // العنوان
+        { wch: 30 }, // المنتج
+        { wch: 8 },  // الكمية
+        { wch: 12 }, // سعر الوحدة
+        { wch: 15 }, // المجموع قبل الخصم
+        { wch: 12 }, // قيمة الخصم
+        { wch: 15 }, // المبلغ النهائي
+        { wch: 15 }, // كود الكوبون
+        { wch: 12 }, // الحالة
+        { wch: 20 }  // التاريخ والوقت
+      ];
+      ws['!cols'] = colWidths;
+
+      // تطبيق التنسيقات والألوان
+      const range = XLSX.utils.decode_range(ws['!ref']);
+
+      // تنسيق العنوان الرئيسي (الصف الأول)
+      if (ws['A1']) {
+        ws['A1'].s = {
+          font: { bold: true, sz: 16, color: { rgb: "FFFFFF" } },
+          fill: { fgColor: { rgb: "4F46E5" } },
+          alignment: { horizontal: "center", vertical: "center" }
+        };
+      }
+
+      // تنسيق تاريخ التصدير (الصف الثاني)
+      if (ws['A2']) {
+        ws['A2'].s = {
+          font: { sz: 12, color: { rgb: "666666" } },
+          alignment: { horizontal: "center" }
+        };
+      }
+
+      // تنسيق عناوين الأقسام (الصفوف التي تحتوي على 📊 و 📈 و 📋)
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        const cellRef = XLSX.utils.encode_cell({ r: R, c: 0 });
+        if (ws[cellRef] && ws[cellRef].v && typeof ws[cellRef].v === 'string') {
+          if (ws[cellRef].v.includes('📊') || ws[cellRef].v.includes('📈') || ws[cellRef].v.includes('📋')) {
+            ws[cellRef].s = {
+              font: { bold: true, sz: 14, color: { rgb: "FFFFFF" } },
+              fill: { fgColor: { rgb: "059669" } },
+              alignment: { horizontal: "center", vertical: "center" }
+            };
+          }
+        }
+      }
+
+      // تنسيق رأس جدول الطلبات
+      const headerRowIndex = wsData.findIndex(row => row[0] === 'م');
+      if (headerRowIndex !== -1) {
+        for (let C = 0; C <= 12; ++C) {
+          const cellRef = XLSX.utils.encode_cell({ r: headerRowIndex, c: C });
+          if (ws[cellRef]) {
+            ws[cellRef].s = {
+              font: { bold: true, color: { rgb: "FFFFFF" }, sz: 12 },
+              fill: { fgColor: { rgb: "2563EB" } }, // أزرق أجمل
+              alignment: { horizontal: "center", vertical: "center" },
+              border: {
+                top: { style: "medium", color: { rgb: "000000" } },
+                bottom: { style: "medium", color: { rgb: "000000" } },
+                left: { style: "thin", color: { rgb: "000000" } },
+                right: { style: "thin", color: { rgb: "000000" } }
+              }
+            };
+          }
+        }
+      }
+
+      // تنسيق صفوف البيانات
+      const dataStartRow = headerRowIndex + 1;
+      for (let R = dataStartRow; R < wsData.length - 2; ++R) {
+        const isEvenRow = (R - dataStartRow) % 2 === 0;
+        const bgColor = isEvenRow ? "F8FAFC" : "FFFFFF";
+
+        for (let C = 0; C <= 12; ++C) {
+          const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+          if (ws[cellRef]) {
+            // تحديد المحاذاة حسب نوع البيانات
+            let alignment = "right";
+            if (C === 0 || C === 5 || C === 11) alignment = "center"; // م، الكمية، الحالة
+            if (C >= 6 && C <= 9) alignment = "center"; // الأسعار
+
+            ws[cellRef].s = {
+              fill: { fgColor: { rgb: bgColor } },
+              alignment: {
+                horizontal: alignment,
+                vertical: "center"
+              },
+              border: {
+                top: { style: "thin", color: { rgb: "E2E8F0" } },
+                bottom: { style: "thin", color: { rgb: "E2E8F0" } },
+                left: { style: "thin", color: { rgb: "E2E8F0" } },
+                right: { style: "thin", color: { rgb: "E2E8F0" } }
+              },
+              font: { sz: 11 }
+            };
+
+            // تنسيق خاص للأرقام المالية
+            if (C >= 6 && C <= 9) {
+              ws[cellRef].s.numFmt = '#,##0" جنيه"';
+              ws[cellRef].s.font = { sz: 11, bold: true };
+            }
+
+            // تنسيق خاص للحالة
+            if (C === 11) {
+              const status = ws[cellRef].v;
+              if (status === 'تم التسليم') {
+                ws[cellRef].s.fill = { fgColor: { rgb: "DCFCE7" } };
+                ws[cellRef].s.font = { sz: 11, bold: true, color: { rgb: "166534" } };
+              } else if (status === 'تم الشحن') {
+                ws[cellRef].s.fill = { fgColor: { rgb: "DBEAFE" } };
+                ws[cellRef].s.font = { sz: 11, bold: true, color: { rgb: "1D4ED8" } };
+              } else if (status === 'مؤكد') {
+                ws[cellRef].s.fill = { fgColor: { rgb: "FEF3C7" } };
+                ws[cellRef].s.font = { sz: 11, bold: true, color: { rgb: "D97706" } };
+              } else if (status === 'ملغي') {
+                ws[cellRef].s.fill = { fgColor: { rgb: "FEE2E2" } };
+                ws[cellRef].s.font = { sz: 11, bold: true, color: { rgb: "DC2626" } };
+              }
+            }
+          }
+        }
+      }
+
+      // تنسيق صف الإجمالي
+      const totalRowIndex = wsData.length - 1;
+      for (let C = 0; C <= 12; ++C) {
+        const cellRef = XLSX.utils.encode_cell({ r: totalRowIndex, c: C });
+        if (ws[cellRef]) {
+          ws[cellRef].s = {
+            font: { bold: true, color: { rgb: "FFFFFF" }, sz: 12 },
+            fill: { fgColor: { rgb: "059669" } }, // أخضر جميل
+            alignment: { horizontal: "center", vertical: "center" },
+            border: {
+              top: { style: "thick", color: { rgb: "000000" } },
+              bottom: { style: "thick", color: { rgb: "000000" } },
+              left: { style: "medium", color: { rgb: "000000" } },
+              right: { style: "medium", color: { rgb: "000000" } }
+            }
+          };
+
+          // تنسيق خاص للأرقام في صف الإجمالي
+          if (C >= 7 && C <= 9) {
+            ws[cellRef].s.numFmt = '#,##0" جنيه"';
+          }
+        }
+      }
+
+      // إضافة worksheet إلى workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'تقرير الطلبات');
+
+      // تصدير الملف
+      const fileName = `AQRAB_Orders_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+
+      showNotification(`تم تصدير ${totalOrders} طلب بإجمالي ${totalRevenue.toLocaleString('ar-EG')} جنيه`, "success");
+
+    } catch (error) {
+      console.error("خطأ في التصدير:", error);
+      showNotification("حدث خطأ أثناء التصدير", "error");
+    }
+  }
+
+  // دالة مساعدة لترجمة حالة الطلب
+  function getStatusText(status) {
+    const statusMap = {
+      'pending': 'قيد الانتظار',
+      'confirmed': 'مؤكد',
+      'shipped': 'تم الشحن',
+      'delivered': 'تم التسليم',
+      'cancelled': 'ملغي'
+    };
+    return statusMap[status] || 'قيد الانتظار';
+  }
+
+
+
+  // دالة حساب الإحصائيات
+  function updateStats(orders) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const totalOrders = orders.length;
+    const todayOrders = orders.filter(order => {
+      const orderDate = new Date(order.date);
+      orderDate.setHours(0, 0, 0, 0);
+      return orderDate.getTime() === today.getTime();
+    }).length;
+
+    const pendingOrders = orders.filter(order => order.status === 'pending').length;
+    const completedOrders = orders.filter(order => order.status === 'delivered' || order.status === 'received').length;
+
+    // تحديث العناصر
+    document.getElementById('totalOrders').textContent = totalOrders;
+    document.getElementById('todayOrders').textContent = todayOrders;
+    document.getElementById('pendingOrders').textContent = pendingOrders;
+    document.getElementById('completedOrders').textContent = completedOrders;
+  }
+
+  // دالة تحديث عداد الزوار (حل بديل ذكي)
+  async function updateVisitorCount() {
+    console.log("📊 حساب عداد الزوار باستخدام الحل البديل...");
+
+    try {
+      // الحل البديل: حساب الزوار من الطلبات بطريقة ذكية
+      const ordersSnapshot = await getDocs(collection(db, "orders"));
+      const uniquePhones = new Set();
+      const ordersByDate = new Map();
+      let totalOrders = 0;
+
+      ordersSnapshot.forEach(doc => {
+        const order = doc.data();
+        totalOrders++;
+
+        if (order.phone) {
+          uniquePhones.add(order.phone);
+        }
+
+        // تجميع الطلبات حسب التاريخ
+        if (order.date) {
+          const orderDate = new Date(order.date).toDateString();
+          if (!ordersByDate.has(orderDate)) {
+            ordersByDate.set(orderDate, 0);
+          }
+          ordersByDate.set(orderDate, ordersByDate.get(orderDate) + 1);
+        }
+      });
+
+      // حساب تقدير ذكي للزوار
+      const uniqueCustomers = uniquePhones.size;
+      const averageOrdersPerDay = ordersByDate.size > 0 ? totalOrders / ordersByDate.size : 1;
+      const conversionRate = uniqueCustomers > 0 ? (totalOrders / uniqueCustomers) : 1;
+
+      // تقدير الزوار بناءً على معدل التحويل
+      let estimatedVisitors;
+      if (conversionRate > 0.1) {
+        // معدل تحويل عالي - تقدير محافظ
+        estimatedVisitors = Math.round(uniqueCustomers * 4);
+      } else if (conversionRate > 0.05) {
+        // معدل تحويل متوسط
+        estimatedVisitors = Math.round(uniqueCustomers * 6);
+      } else {
+        // معدل تحويل منخفض - تقدير أعلى
+        estimatedVisitors = Math.round(uniqueCustomers * 10);
+      }
+
+      // إضافة تقدير للزوار الذين لم يطلبوا
+      estimatedVisitors += Math.round(averageOrdersPerDay * ordersByDate.size * 2);
+
+      // عرض النتيجة
+      document.getElementById('totalVisitors').textContent = `~${estimatedVisitors}`;
+      document.getElementById('totalVisitors').title = `تقدير ذكي: ${uniqueCustomers} عميل فريد، معدل التحويل: ${(conversionRate * 100).toFixed(1)}%`;
+
+      console.log("📊 إحصائيات الزوار:");
+      console.log(`- العملاء الفريدون: ${uniqueCustomers}`);
+      console.log(`- إجمالي الطلبات: ${totalOrders}`);
+      console.log(`- معدل التحويل: ${(conversionRate * 100).toFixed(1)}%`);
+      console.log(`- تقدير الزوار: ${estimatedVisitors}`);
+
+    } catch (error) {
+      console.error("❌ خطأ في حساب عداد الزوار:", error);
+      hasPermissionIssues = true;
+      document.getElementById('totalVisitors').textContent = "غير متاح";
+      document.getElementById('totalVisitors').className = "text-3xl font-bold text-gray-400";
+      document.getElementById('totalVisitors').title = "لا يمكن حساب عداد الزوار";
+      showPermissionsAlert();
+    }
+  }
+
+  // دالة تحديث عداد المرتجعات (مع إخفاء القسم إذا لم يكن متاح)
+  async function updateReturnsCount() {
+    try {
+      const querySnapshot = await getDocs(collection(db, "returns"));
+      const totalReturns = querySnapshot.size;
+      document.getElementById('totalReturns').textContent = totalReturns;
+      console.log("✅ تم جلب عداد المرتجعات:", totalReturns);
+
+      // إظهار زر المرتجعات إذا كان متاح
+      const returnsTab = document.getElementById('returnsTab');
+      if (returnsTab) {
+        returnsTab.style.display = 'flex';
+      }
+
+    } catch (error) {
+      console.warn("⚠️ نظام المرتجعات غير متاح - إخفاء القسم");
+
+      // إخفاء عداد المرتجعات
+      const returnsCard = document.querySelector('[data-card="returns"]');
+      if (returnsCard) {
+        returnsCard.style.display = 'none';
+      }
+
+      // إخفاء زر المرتجعات من التنقل
+      const returnsTab = document.getElementById('returnsTab');
+      if (returnsTab) {
+        returnsTab.style.display = 'none';
+      }
+
+      // إخفاء قسم المرتجعات بالكامل
+      const returnsSection = document.getElementById('returnsSection');
+      if (returnsSection) {
+        returnsSection.style.display = 'none';
+      }
+
+      console.log("🔒 تم إخفاء نظام المرتجعات بسبب عدم وجود صلاحيات");
+    }
+  }
+
+  // دالة تحميل المرتجعات
+  async function loadReturns() {
+    const tbody = document.getElementById("returnsTable");
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" class="py-8 text-center text-gray-500">
+          <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+          <div>جاري التحميل...</div>
+        </td>
+      </tr>
+    `;
+
+    try {
+      const querySnapshot = await getDocs(collection(db, "returns"));
+
+      if (querySnapshot.empty) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center text-gray-500">
+              <i class="fa-solid fa-inbox text-4xl mb-4 text-gray-300"></i>
+              <div class="text-lg font-medium">لا توجد مرتجعات حتى الآن</div>
+              <div class="text-sm">ستظهر طلبات الإرجاع هنا</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = "";
+
+      querySnapshot.forEach(docSnap => {
+        const returnItem = docSnap.data();
+        const returnDate = new Date(returnItem.returnDate);
+        const formattedDate = returnDate.toLocaleDateString('ar-EG', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        const statusColors = {
+          'pending': 'bg-yellow-100 text-yellow-800',
+          'approved': 'bg-green-100 text-green-800',
+          'rejected': 'bg-red-100 text-red-800',
+          'completed': 'bg-blue-100 text-blue-800'
+        };
+
+        const statusTranslations = {
+          'pending': 'قيد المراجعة',
+          'approved': 'تم الموافقة',
+          'rejected': 'مرفوض',
+          'completed': 'مكتمل'
+        };
+
+        tbody.innerHTML += `
+          <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+            <td class="py-4 px-6 text-right">
+              <div class="font-medium">${returnItem.customerName || "-"}</div>
+              <div class="text-xs text-gray-500">رقم الطلب: ${returnItem.orderId ? returnItem.orderId.substring(0, 8).toUpperCase() : "-"}</div>
+            </td>
+            <td class="py-4 px-6 text-center">
+              <div class="font-medium">${returnItem.customerPhone || "-"}</div>
+            </td>
+            <td class="py-4 px-6 text-right">
+              <div class="font-medium">${returnItem.productName || "-"}</div>
+              <div class="text-xs text-gray-500">الكمية: ${returnItem.quantity || 1}</div>
+              ${returnItem.originalPrice ? `<div class="text-xs text-gray-500">السعر الأصلي: ${returnItem.originalPrice} جنيه</div>` : ''}
+            </td>
+            <td class="py-4 px-6 text-right">
+              <div class="text-sm">${returnItem.returnReason || "-"}</div>
+              ${returnItem.additionalDetails ? `<div class="text-xs text-gray-500 mt-1">${returnItem.additionalDetails}</div>` : ''}
+            </td>
+            <td class="py-4 px-6 text-center">
+              <div class="font-medium">${returnItem.refundAmount || "0"} جنيه</div>
+            </td>
+            <td class="py-4 px-6 text-center">
+              <select class="return-status-dropdown ${statusColors[returnItem.status]} border border-gray-300 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+                      data-return-id="${docSnap.id}"
+                      data-current-status="${returnItem.status}">
+                <option value="pending" ${returnItem.status === 'pending' ? 'selected' : ''}>قيد المراجعة</option>
+                <option value="approved" ${returnItem.status === 'approved' ? 'selected' : ''}>تم الموافقة</option>
+                <option value="rejected" ${returnItem.status === 'rejected' ? 'selected' : ''}>مرفوض</option>
+                <option value="completed" ${returnItem.status === 'completed' ? 'selected' : ''}>مكتمل</option>
+              </select>
+            </td>
+            <td class="py-4 px-6 text-center">
+              <div class="text-sm text-gray-600">${formattedDate}</div>
+            </td>
+            <td class="py-4 px-6 text-center">
+              <div class="flex gap-1 justify-center flex-wrap">
+                <button class="view-return-details bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium transition flex items-center gap-1"
+                        data-return='${JSON.stringify(returnItem)}'
+                        data-return-id="${docSnap.id}">
+                  <i class="fa-solid fa-eye"></i>
+                  تفاصيل
+                </button>
+                <button class="whatsapp-return-btn bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs font-medium transition flex items-center gap-1"
+                        data-phone="${returnItem.customerPhone}"
+                        data-name="${returnItem.customerName}"
+                        data-status="${returnItem.status}">
+                  <i class="fa-brands fa-whatsapp"></i>
+                  واتساب
+                </button>
+                <button class="delete-return-btn bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs font-medium transition flex items-center gap-1"
+                        data-id="${docSnap.id}">
+                  <i class="fa-solid fa-trash"></i>
+                  حذف
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      // تفعيل أزرار المرتجعات
+      activateReturnButtons();
+
+    } catch (error) {
+      console.error("خطأ في تحميل المرتجعات:", error);
+
+      // التحقق من نوع الخطأ
+      if (error.code === 'permission-denied') {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center text-yellow-600">
+              <i class="fa-solid fa-lock text-4xl mb-4"></i>
+              <div class="text-lg font-medium">لا توجد صلاحيات للوصول إلى المرتجعات</div>
+              <div class="text-sm">يرجى التحقق من إعدادات Firebase</div>
+            </td>
+          </tr>
+        `;
+      } else {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-8 text-center text-red-500">
+              <i class="fa-solid fa-exclamation-triangle text-2xl mb-2"></i>
+              <div>حدث خطأ في تحميل البيانات</div>
+              <div class="text-sm">${error.message}</div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+  }
+
+  // تفعيل أزرار المرتجعات
+  function activateReturnButtons() {
+    // أزرار عرض التفاصيل
+    document.querySelectorAll(".view-return-details").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const returnData = JSON.parse(btn.getAttribute("data-return"));
+        const returnId = btn.getAttribute("data-return-id");
+        showReturnDetails(returnData, returnId);
+      });
+    });
+
+    // أزرار واتساب للمرتجعات
+    document.querySelectorAll(".whatsapp-return-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const phone = btn.getAttribute("data-phone");
+        const name = btn.getAttribute("data-name");
+        const status = btn.getAttribute("data-status");
+
+        let message = `مرحباً ${name}، بخصوص طلب الإرجاع الخاص بك من AQRAB.`;
+
+        switch(status) {
+          case 'pending':
+            message += ' طلبك قيد المراجعة وسنرد عليك قريباً.';
+            break;
+          case 'approved':
+            message += ' تم الموافقة على طلب الإرجاع. سنتواصل معك لترتيب الاسترداد.';
+            break;
+          case 'rejected':
+            message += ' نأسف، لم يتم الموافقة على طلب الإرجاع. للمزيد من التفاصيل يرجى التواصل معنا.';
+            break;
+          case 'completed':
+            message += ' تم إكمال عملية الإرجاع بنجاح. شكراً لك.';
+            break;
+        }
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${phone.replace('+', '')}?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+      });
+    });
+
+    // أزرار حذف المرتجعات
+    document.querySelectorAll(".delete-return-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (confirm("هل أنت متأكد أنك تريد حذف هذا المرتجع؟")) {
+          try {
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحذف...';
+            btn.disabled = true;
+
+            await deleteDoc(doc(db, "returns", btn.getAttribute("data-id")));
+
+            showNotification("تم حذف المرتجع بنجاح", "success");
+            loadReturns();
+          } catch (error) {
+            console.error("خطأ في الحذف:", error);
+            showNotification("حدث خطأ أثناء الحذف", "error");
+            btn.innerHTML = '<i class="fa-solid fa-trash"></i> حذف';
+            btn.disabled = false;
+          }
+        }
+      });
+    });
+
+    // تحديث حالة المرتجع
+    document.querySelectorAll(".return-status-dropdown").forEach(dropdown => {
+      dropdown.addEventListener("change", async (e) => {
+        const returnId = e.target.getAttribute("data-return-id");
+        const newStatus = e.target.value;
+        const currentStatus = e.target.getAttribute("data-current-status");
+
+        if (newStatus !== currentStatus) {
+          try {
+            await updateDoc(doc(db, "returns", returnId), {
+              status: newStatus
+            });
+
+            e.target.setAttribute("data-current-status", newStatus);
+            showNotification("تم تحديث حالة المرتجع بنجاح", "success");
+          } catch (error) {
+            console.error("خطأ في تحديث الحالة:", error);
+            showNotification("حدث خطأ أثناء تحديث الحالة", "error");
+            e.target.value = currentStatus;
+          }
+        }
+      });
+    });
+  }
+
+  // دالة عرض تفاصيل المرتجع
+  function showReturnDetails(returnData, returnId) {
+    const modal = document.getElementById('returnDetailsModal');
+    const content = document.getElementById('returnDetailsContent');
+
+    const returnDate = new Date(returnData.returnDate);
+    const orderDate = returnData.orderDate ? new Date(returnData.orderDate) : null;
+
+    content.innerHTML = `
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <h4 class="font-semibold text-gray-900 border-b pb-2">معلومات العميل</h4>
+          <div>
+            <label class="text-sm text-gray-600">اسم العميل:</label>
+            <p class="font-medium">${returnData.customerName || "-"}</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-600">رقم الهاتف:</label>
+            <p class="font-medium">${returnData.customerPhone || "-"}</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-600">رقم الطلب الأصلي:</label>
+            <p class="font-medium">${returnData.orderId ? returnData.orderId.substring(0, 8).toUpperCase() : "-"}</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <h4 class="font-semibold text-gray-900 border-b pb-2">معلومات المنتج</h4>
+          <div>
+            <label class="text-sm text-gray-600">اسم المنتج:</label>
+            <p class="font-medium">${returnData.productName || "-"}</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-600">الكمية:</label>
+            <p class="font-medium">${returnData.quantity || 1}</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-600">السعر الأصلي:</label>
+            <p class="font-medium">${returnData.originalPrice || "-"} جنيه</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-4">
+        <h4 class="font-semibold text-gray-900 border-b pb-2">تفاصيل الإرجاع</h4>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm text-gray-600">سبب الإرجاع:</label>
+            <p class="font-medium">${returnData.returnReason || "-"}</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-600">مبلغ الاسترداد المطلوب:</label>
+            <p class="font-medium">${returnData.refundAmount || "0"} جنيه</p>
+          </div>
+          <div>
+            <label class="text-sm text-gray-600">تاريخ طلب الإرجاع:</label>
+            <p class="font-medium">${returnDate.toLocaleDateString('ar-EG', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}</p>
+          </div>
+          ${orderDate ? `
+          <div>
+            <label class="text-sm text-gray-600">تاريخ الطلب الأصلي:</label>
+            <p class="font-medium">${orderDate.toLocaleDateString('ar-EG', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}</p>
+          </div>
+          ` : ''}
+        </div>
+
+        ${returnData.additionalDetails ? `
+        <div>
+          <label class="text-sm text-gray-600">تفاصيل إضافية:</label>
+          <p class="bg-gray-50 p-3 rounded-lg">${returnData.additionalDetails}</p>
+        </div>
+        ` : ''}
+
+        <div>
+          <label class="text-sm text-gray-600">ملاحظات الإدارة:</label>
+          <textarea id="adminNotesInput" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="أضف ملاحظات للمتابعة...">${returnData.adminNotes || ''}</textarea>
+        </div>
+      </div>
+    `;
+
+    // حفظ معرف المرتجع للاستخدام عند الحفظ
+    modal.setAttribute('data-return-id', returnId);
+    modal.classList.remove('hidden');
+  }
+
+  // إغلاق نافذة التفاصيل
+  document.getElementById('closeReturnDetails')?.addEventListener('click', () => {
+    document.getElementById('returnDetailsModal').classList.add('hidden');
+  });
+
+  document.getElementById('closeReturnDetailsBtn')?.addEventListener('click', () => {
+    document.getElementById('returnDetailsModal').classList.add('hidden');
+  });
+
+  // حفظ ملاحظات الإدارة
+  document.getElementById('updateReturnNotes')?.addEventListener('click', async () => {
+    const modal = document.getElementById('returnDetailsModal');
+    const returnId = modal.getAttribute('data-return-id');
+    const adminNotes = document.getElementById('adminNotesInput').value;
+
+    try {
+      await updateDoc(doc(db, "returns", returnId), {
+        adminNotes: adminNotes
+      });
+
+      showNotification("تم حفظ الملاحظات بنجاح", "success");
+      modal.classList.add('hidden');
+      loadReturns(); // إعادة تحميل البيانات
+    } catch (error) {
+      console.error("خطأ في حفظ الملاحظات:", error);
+      showNotification("حدث خطأ أثناء حفظ الملاحظات", "error");
+    }
+  });
+
+  // التنقل بين التبويبات
+  document.getElementById('returnsTab')?.addEventListener('click', async () => {
+    // إخفاء قسم الطلبات
+    document.getElementById('ordersSection').style.display = 'none';
+    // إظهار قسم المرتجعات
+    document.getElementById('returnsSection').classList.remove('hidden');
+
+    // تحميل المرتجعات
+    await loadReturns();
+  });
+
+  // العودة لقسم الطلبات
+  document.getElementById('backToOrders')?.addEventListener('click', () => {
+    document.getElementById('returnsSection').classList.add('hidden');
+    document.getElementById('ordersSection').style.display = 'block';
+  });
+
+  // زر تحديث المرتجعات
+  document.getElementById('refreshReturns')?.addEventListener('click', () => {
+    loadReturns();
+  });
+
+  // البحث في المرتجعات
+  document.getElementById('searchReturns')?.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#returnsTable tr');
+
+    rows.forEach(row => {
+      if (row.querySelector('td')) { // تجاهل header row
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      }
+    });
+  });
+
+  // زر تحديث الطلبات
+  document.getElementById('refreshOrders')?.addEventListener('click', () => {
+    loadOrders();
+  });
+
+  // وظيفة البحث في الطلبات
+  document.getElementById('searchInput')?.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    const rows = document.querySelectorAll('#ordersTable tr');
+
+    rows.forEach(row => {
+      if (row.querySelector('td')) { // تجاهل صف العنوان
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      }
+    });
+  });
+
+  // زر تصدير البيانات
+  document.getElementById('exportData')?.addEventListener('click', () => {
+    exportData();
+  });
+
+
+
+  // زر الإشعارات
+  document.getElementById('notificationBtn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('notificationBtn');
+    const icon = btn.querySelector('i');
+    const text = btn.querySelector('span');
+
+    // تغيير شكل الزر أثناء المعالجة
+    icon.className = 'fa-solid fa-spinner fa-spin';
+    if (text) text.textContent = 'جاري...';
+
+    const granted = await requestNotificationPermission();
+
+    // تحديث شكل الزر حسب النتيجة
+    setTimeout(() => {
+      if (granted) {
+        icon.className = 'fa-solid fa-bell';
+        btn.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2';
+        btn.title = 'الإشعارات مفعلة';
+        if (text) text.textContent = 'مفعل';
+      } else {
+        icon.className = 'fa-solid fa-bell-slash';
+        btn.className = 'bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2';
+        btn.title = 'الإشعارات معطلة';
+        if (text) text.textContent = 'معطل';
+      }
+    }, 500);
+  });
+
+  // Event listeners للنظام المالي
+
+  // زر حفظ إعدادات المنتج
+  document.getElementById('saveProductSettings')?.addEventListener('click', saveProductSettings);
+
+  // زر تحديث الإحصائيات المالية
+  document.getElementById('refreshFinancials')?.addEventListener('click', calculateFinancialStats);
+
+  // تحديث معاينة الربح عند تغيير القيم
+  ['productCost', 'productPrice', 'shippingCost', 'additionalCosts'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', updateProfitPreview);
+  });
+
+  // دمج حساب الإحصائيات مع loadOrders
+  const originalLoadOrders = loadOrders;
+  loadOrders = async function() {
+    try {
+      // تحميل الطلبات أولاً
+      await originalLoadOrders();
+
+      // حساب الإحصائيات من البيانات المحملة
+      const querySnapshot = await getDocs(collection(db, "orders"));
+      const orders = [];
+      querySnapshot.forEach((doc) => {
+        orders.push(doc.data());
+      });
+      updateStats(orders);
+
+      // حساب الإحصائيات المالية
+      calculateFinancialStats();
+
+      console.log("✅ تم تحميل الطلبات والإحصائيات بنجاح");
+
+    } catch (error) {
+      console.error("❌ خطأ في تحميل البيانات:", error);
+
+      // إذا كانت مشكلة صلاحيات، عرض رسالة واضحة
+      if (error.code === 'permission-denied') {
+        console.warn("🔒 لا توجد صلاحيات للوصول إلى قاعدة البيانات");
+        showPermissionsAlert();
+      }
+    }
+
+    // تحديث العدادات الإضافية (منفصلة عن الطلبات)
+    // تحديث عداد الزوار (مع معالجة الأخطاء)
+    try {
+      await updateVisitorCount();
+    } catch (error) {
+      console.warn("تحذير: لا يمكن تحديث عداد الزوار");
+    }
+
+    // تحديث عداد المرتجعات (مع معالجة الأخطاء)
+    try {
+      await updateReturnsCount();
+    } catch (error) {
+      console.warn("تحذير: لا يمكن تحديث عداد المرتجعات");
+      // إظهار تحذير على زر المرتجعات
+      const returnsTabWarning = document.getElementById('returnsTabWarning');
+      if (returnsTabWarning) {
+        returnsTabWarning.classList.remove('hidden');
+        returnsTabWarning.title = "لا توجد صلاحيات للوصول إلى المرتجعات";
+      }
+    }
+  };
+
+  // Auto refresh every 30 seconds
+  setInterval(loadOrders, 30000);
+
+  // Initial load
+  loadOrders();
+
+</script>
+
+  </div> <!-- End of mainContent -->
+
+</body>
+</html>

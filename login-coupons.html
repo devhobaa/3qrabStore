@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تسجيل الدخول - إدارة الكوبونات</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Cairo', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-6">تسجيل الدخول</h1>
+
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block mb-1 text-sm font-medium text-gray-700">البريد الإلكتروني</label>
+        <input type="email" id="email" class="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm font-medium text-gray-700">كلمة المرور</label>
+        <input type="password" id="password" class="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition">
+        تسجيل الدخول
+      </button>
+    </form>
+
+    <div id="loginMessage" class="mt-4 text-center text-sm hidden"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeFqpa8MtVF5r3kKLfYZdM3EgPZCs3zeI",
+      authDomain: "zamman-admin.firebaseapp.com",
+      projectId: "zamman-admin",
+      storageBucket: "zamman-admin.firebasestorage.app",
+      messagingSenderId: "910842307850",
+      appId: "1:910842307850:web:b7548b7a3323e1a19046f3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const form = document.getElementById("loginForm");
+    const messageDiv = document.getElementById("loginMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        messageDiv.className = "mt-4 text-center text-green-600 font-medium";
+        messageDiv.textContent = "✅ تم تسجيل الدخول بنجاح، جاري التحويل...";
+        messageDiv.classList.remove("hidden");
+
+        setTimeout(() => {
+          window.location.href = "coupons-admin.html";
+        }, 1500);
+      } catch (error) {
+        messageDiv.className = "mt-4 text-center text-red-600 font-medium";
+        messageDiv.textContent = "❌ فشل تسجيل الدخول: " + error.message;
+        messageDiv.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>

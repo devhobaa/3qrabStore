@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ساعة كربون أسود — أرقام عربية | متجر AQRAB</title>
+  <link rel="icon" type="image/x-icon" href="logo.ico">
+   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script>
+    // إخفاء تحذيرات Tailwind CSS في الكونسول
+    tailwind.config = {
+      corePlugins: {
+        preflight: false,
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body class="bg-white text-black font-sans">
+
+  <!-- هيدر -->
+  <header class="bg-white/90 backdrop-blur border-b border-black/10 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-bold tracking-tight">AQRAB</h1>
+      <a href="track-order.html" class="text-sm text-gray-600 hover:text-black transition flex items-center gap-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg">
+        <i class="fa-solid fa-truck"></i>
+        تتبع الطلب
+      </a>
+    </div>
+  </header>
+<style>
+  * {
+    font-family: 'Cairo', sans-serif;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+  }
+
+  .product-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  .price-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    color: white;
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+  }
+  /* الكرة العائمة */
+  #chat-ball {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #000000, #333333);
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    z-index: 9999;
+    transition: transform 0.2s ease;
+  }
+
+  #chat-ball:hover {
+    transform: scale(1.1);
+  }
+
+  /* popup */
+  #chat-popup {
+    display: none;
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 350px;
+    height: 500px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 9998;
+  }
+
+  #chat-popup iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* زر اغلاق */
+  #chat-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    z-index: 10000;
+  }
+</style>
+
+  <!-- المنتج -->
+  <main class="max-w-7xl mx-auto px-4 py-8 lg:py-16">
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+    
+      <!-- صور -->
+      <div class="space-y-6">
+        <div class="product-card rounded-3xl p-8 border border-gray-200">
+          <img id="mainImage" src="images/4.jpg" alt="ساعة كربون أسود" class="w-full h-96 lg:h-[500px] object-cover rounded-2xl transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="grid grid-cols-4 gap-4">
+          <img src="images/2.jpg" class="thumb h-20 lg:h-24 w-full object-cover rounded-xl border-2 border-gray-200 hover:border-purple-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg">
+          <img src="images/3.jpg" class="thumb h-20 lg:h-24 w-full object-cover rounded-xl border-2 border-gray-200 hover:border-purple-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg">
+          <img src="images/5.jpg" class="thumb h-20 lg:h-24 w-full object-cover rounded-xl border-2 border-gray-200 hover:border-purple-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg">
+          <img src="images/1.jpg" class="thumb h-20 lg:h-24 w-full object-cover rounded-xl border-2 border-gray-200 hover:border-purple-500 cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg">
+        </div>
+      </div>
+
+      <!-- تفاصيل -->
+      <div class="space-y-8 lg:sticky lg:top-8">
+        <div class="space-y-4">
+          <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">ساعة كربون أسود — أرقام عربية</h1>
+          <p class="text-lg text-gray-600 leading-relaxed">
+            ساعة فاخرة بتصميم كربون أسود أنيق، أرقام عربية واضحة، مقاومة للماء، مناسبة للاستخدام اليومي والمناسبات الخاصة.
+          </p>
+        </div>
+
+        <!-- السعر -->
+        <div class="price-card">
+          <div class="flex items-center gap-4 mb-3">
+            <span class="text-4xl lg:text-5xl font-bold text-white">400 جنيه</span>
+            <span class="text-xl text-white/70 line-through">550 جنيه</span>
+          </div>
+          <div class="flex items-center gap-2 text-white/90 font-medium">
+            <i class="fa-solid fa-tag"></i>
+            <span>وفر 150 جنيه (27% خصم)</span>
+          </div>
+        </div>
+
+        <!-- أزرار -->
+        <div class="space-y-4">
+          <button id="addToCart" class="btn-primary w-full text-white py-5 px-8 rounded-2xl text-xl font-bold transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center gap-3">
+            <i class="fa-solid fa-cart-shopping text-xl"></i>
+            اطلب الآن
+          </button>
+          <div class="flex gap-4">
+            <button id="addToFavorites" class="flex-1 border-2 border-gray-300 hover:border-red-500 text-gray-700 hover:text-red-500 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2" aria-label="إضافة إلى المفضلة">
+              <i class="fa-regular fa-heart"></i>
+              إضافة للمفضلة
+            </button>
+            <button id="shareProduct" class="flex-1 border-2 border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-500 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-share"></i>
+              مشاركة
+            </button>
+          </div>
+        </div>
+
+
+<!-- نافذة منبثقة -->
+<div id="orderPopup" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white text-black p-8 rounded-3xl w-full max-w-lg lg:max-w-2xl shadow-2xl border border-gray-200 max-h-[90vh] overflow-y-auto">
+    <div class="text-center mb-8">
+      <h3 class="text-3xl font-bold text-gray-900 mb-2">
+        <i class="fa-solid fa-cart-shopping ml-2 text-blue-600"></i>
+        إتمام الطلب
+      </h3>
+      <p class="text-gray-600">املأ البيانات التالية لإتمام طلبك</p>
+    </div>
+
+    <!-- رسالة الحالة -->
+    <div id="statusMsg" class="mb-3 text-center text-sm font-medium text-gray-600" aria-live="polite"></div>
+
+    <!-- بيانات العميل -->
+    <div class="space-y-6 mb-8">
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="relative">
+          <label class="block text-sm font-medium text-gray-700 mb-2">الاسم الكامل</label>
+          <input id="name" type="text" placeholder="أدخل اسمك الكامل" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 pl-12 transition-all">
+          <i class="fa-regular fa-user absolute left-4 top-11 text-gray-400" aria-hidden="true"></i>
+        </div>
+
+        <div class="relative">
+          <label class="block text-sm font-medium text-gray-700 mb-2">رقم الهاتف</label>
+          <div class="flex">
+            <span class="px-4 flex items-center bg-gray-100 border-2 border-gray-200 border-l-0 rounded-r-xl text-gray-600 font-medium">+20</span>
+            <input id="phone" type="tel" maxlength="11" placeholder="1012345678" class="flex-1 p-4 border-2 border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 pl-12 transition-all">
+            <i class="fa-solid fa-phone absolute left-4 top-11 text-gray-400" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-2">العنوان بالتفصيل</label>
+        <input id="address" type="text" placeholder="المحافظة، المدينة، الشارع، رقم المبنى" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 pl-12 transition-all">
+        <i class="fa-solid fa-location-dot absolute left-4 top-11 text-gray-400" aria-hidden="true"></i>
+      </div>
+
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-2">الكمية</label>
+        <input id="quantity" type="number" min="1" value="1" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-12 transition-all">
+        <i class="fa-solid fa-hashtag absolute left-4 top-11 text-gray-400" aria-hidden="true"></i>
+      </div>
+    </div>
+
+    <!-- قسم الكوبون -->
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl p-6 mb-8">
+      <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-ticket text-purple-600 text-xl"></i>
+        كود الخصم (اختياري)
+      </h4>
+      <div class="flex gap-3 mb-3">
+        <div class="flex-1 relative">
+          <input id="couponCode" type="text" placeholder="أدخل كود الخصم إن وجد" class="w-full p-4 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder-gray-400 pl-12 transition-all">
+          <i class="fa-solid fa-tag absolute left-4 top-4 text-gray-400" aria-hidden="true"></i>
+        </div>
+        <button id="applyCouponBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center gap-2">
+          <i class="fa-solid fa-check"></i>
+          تطبيق
+        </button>
+      </div>
+      <div id="couponMessage" class="text-sm hidden"></div>
+    </div>
+
+    <!-- عرض السعر -->
+    <div class="bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 rounded-2xl p-6 mb-8">
+      <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-calculator text-green-600"></i>
+        ملخص الطلب
+      </h4>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-600 font-medium">السعر الأصلي:</span>
+          <span id="originalPrice" class="font-bold text-gray-800 text-lg">400 جنيه</span>
+        </div>
+        <div id="discountRow" class="hidden flex justify-between items-center">
+          <span class="text-green-600 font-medium">الخصم:</span>
+          <span id="discountAmount" class="font-bold text-green-600 text-lg">- 0 جنيه</span>
+        </div>
+        <div class="border-t-2 border-gray-300 pt-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xl font-bold text-gray-900">المجموع:</span>
+            <span id="finalPrice" class="text-2xl font-bold text-green-600">400 جنيه</span>
+          </div>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+          <p class="text-xs text-blue-800 flex items-center gap-2">
+            <i class="fa-solid fa-info-circle"></i>
+            <span>تكلفة الشحن سيتم تحديدها عند التواصل معك حسب منطقتك</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-4">
+      <button id="closePopup" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-4 px-6 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-xmark"></i>
+        إغلاق
+      </button>
+      <button id="sendOrder" class="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 px-6 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2 shadow-lg">
+        <i class="fa-solid fa-rocket"></i>
+        إرسال الطلب
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- رسالة النجاح -->
+<div id="successMessage" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-3xl p-8 lg:p-12 max-w-md lg:max-w-lg mx-4 text-center shadow-2xl border border-gray-200">
+    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+      <i class="fa-solid fa-check text-green-600 text-3xl"></i>
+    </div>
+    <h3 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">تم إرسال الطلب بنجاح!</h3>
+    <div class="text-lg text-gray-600 mb-8 leading-relaxed">
+      <p class="mb-4">شكراً لك على ثقتك بنا</p>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm">
+        <h4 class="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-info-circle"></i>
+          معلومات مهمة:
+        </h4>
+        <ul class="space-y-2 text-blue-700">
+          <li class="flex items-start gap-2">
+            <i class="fa-solid fa-phone text-blue-600 mt-0.5"></i>
+            <span>سيتم التواصل معك قريباً لتأكيد التفاصيل</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fa-solid fa-shipping-fast text-blue-600 mt-0.5"></i>
+            <span>سعر الشحن سيتم احتسابه والتأكيد عليه بعد مراجعة العنوان بناءً على أسعار إيزي بوكس</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fa-solid fa-clock text-blue-600 mt-0.5"></i>
+            <span>التوصيل خلال 2-3 أيام عمل من تأكيد الطلب</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <button id="trackOrderBtn" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3">
+        <i class="fa-solid fa-truck text-xl"></i>
+        تتبع الطلب الآن
+      </button>
+      <button id="closeSuccessBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3">
+        <i class="fa-solid fa-check"></i>
+        إغلاق
+      </button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDeFqpa8MtVF5r3kKLfYZdM3EgPZCs3zeI",
+    authDomain: "zamman-admin.firebaseapp.com",
+    projectId: "zamman-admin",
+    storageBucket: "zamman-admin.firebasestorage.app",
+    messagingSenderId: "910842307850",
+    appId: "1:910842307850:web:b7548b7a3323e1a19046f3",
+    measurementId: "G-9MB7VF17G4"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // بيانات CallMeBot
+  const phone = "201026897739"; 
+  const apikey = "5722213";
+
+  // دالة لإرسال رسالة واتساب
+  async function sendWhatsAppMessage(order) {
+    const message = `📦 طلب جديد:
+👤 الاسم: ${order.name}
+📞 التليفون: ${order.phone}
+🏠 العنوان: ${order.address}
+🛒 الكمية: ${order.quantity}
+⏰ الوقت: ${order.orderTime}`;
+
+    const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(message)}&apikey=${apikey}`;
+
+    try {
+      await fetch(url);
+      console.log("✅ تم إرسال رسالة واتساب");
+    } catch (error) {
+      console.error("❌ فشل الإرسال:", error);
+    }
+  }
+
+  // مراقبة الطلبات الجديدة
+  const ordersRef = collection(db, "orders");
+  onSnapshot(ordersRef, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === "added") {
+        const newOrder = change.doc.data();
+        console.log("📥 طلب جديد:", newOrder);
+        sendWhatsAppMessage(newOrder);
+      }
+    });
+  });
+  // التحقق من حالة Firebase
+  console.log("🔥 Firebase تم تهيئته بنجاح");
+  console.log("📊 قاعدة البيانات جاهزة:", db.app.name);
+
+  const popup = document.getElementById("orderPopup");
+  const openBtn = document.getElementById("addToCart");
+  const closeBtn = document.getElementById("closePopup");
+  const sendBtn = document.getElementById("sendOrder");
+  const statusMsg = document.getElementById("statusMsg");
+
+  // متغيرات الكوبون والسعر
+  const unitPrice = 400; // سعر القطعة الواحدة
+  let appliedCoupon = null;
+  let discountAmount = 0;
+  let currentQuantity = 1;
+  let totalBeforeDiscount = unitPrice; // السعر الإجمالي قبل الخصم
+  let finalPrice = unitPrice; // السعر النهائي
+
+
+
+  openBtn.addEventListener("click", () => popup.classList.remove("hidden"));
+  closeBtn.addEventListener("click", () => popup.classList.add("hidden"));
+
+  // مراقبة تغيير الكمية
+  document.getElementById("quantity").addEventListener("input", (e) => {
+    currentQuantity = parseInt(e.target.value) || 1;
+    if (currentQuantity < 1) {
+      currentQuantity = 1;
+      e.target.value = 1;
+    }
+    calculateTotalPrice();
+  });
+
+  // دالة التحقق من صحة الكوبون
+  async function validateCoupon(couponCode) {
+    try {
+      const q = query(collection(db, "coupons"), where("code", "==", couponCode.toUpperCase()));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return { valid: false, message: "كود الخصم غير صحيح" };
+      }
+
+      const couponDoc = querySnapshot.docs[0];
+      const coupon = couponDoc.data();
+
+      // التحقق من انتهاء الصلاحية
+      const now = new Date();
+      const expiryDate = coupon.expiryDate.toDate();
+
+      if (now > expiryDate) {
+        return { valid: false, message: "انتهت صلاحية كود الخصم" };
+      }
+
+      return { valid: true, coupon: coupon };
+    } catch (error) {
+      console.error("خطأ في التحقق من الكوبون:", error);
+      return { valid: false, message: "حدث خطأ أثناء التحقق من الكوبون" };
+    }
+  }
+
+  // دالة حساب الخصم
+  function calculateDiscount(coupon, originalPrice) {
+    if (coupon.discountType === "percentage") {
+      return (originalPrice * coupon.discountValue) / 100;
+    } else if (coupon.discountType === "amount") {
+      return Math.min(coupon.discountValue, originalPrice);
+    }
+    return 0;
+  }
+
+  // دالة حساب السعر الإجمالي
+  function calculateTotalPrice() {
+    // حساب السعر الإجمالي قبل الخصم (سعر الوحدة × الكمية)
+    totalBeforeDiscount = unitPrice * currentQuantity;
+
+    // حساب الخصم بناءً على السعر الإجمالي
+    if (appliedCoupon) {
+      discountAmount = calculateDiscount(appliedCoupon, totalBeforeDiscount);
+    } else {
+      discountAmount = 0;
+    }
+
+    // حساب السعر النهائي
+    finalPrice = totalBeforeDiscount - discountAmount;
+
+    // تحديث العرض
+    updatePriceDisplay();
+  }
+
+  // دالة تحديث عرض الأسعار
+  function updatePriceDisplay() {
+    document.getElementById("originalPrice").textContent = `${totalBeforeDiscount} جنيه`;
+    document.getElementById("finalPrice").textContent = `${finalPrice} جنيه`;
+
+    if (discountAmount > 0) {
+      document.getElementById("discountRow").classList.remove("hidden");
+      document.getElementById("discountAmount").textContent = `- ${discountAmount} جنيه`;
+    } else {
+      document.getElementById("discountRow").classList.add("hidden");
+    }
+  }
+
+  // تطبيق الكوبون
+  document.getElementById("applyCouponBtn").addEventListener("click", async () => {
+    const couponCode = document.getElementById("couponCode").value.trim();
+    const couponMessage = document.getElementById("couponMessage");
+    const applyCouponBtn = document.getElementById("applyCouponBtn");
+
+    if (!couponCode) {
+      couponMessage.textContent = "يرجى إدخال كود الخصم";
+      couponMessage.className = "text-sm text-red-500";
+      couponMessage.classList.remove("hidden");
+      return;
+    }
+
+    // تعطيل الزر أثناء التحقق
+    applyCouponBtn.disabled = true;
+    applyCouponBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin ml-1"></i> جاري التحقق...';
+
+    const validation = await validateCoupon(couponCode);
+
+    if (validation.valid) {
+      appliedCoupon = validation.coupon;
+      calculateTotalPrice(); // إعادة حساب السعر مع الخصم
+
+      couponMessage.textContent = `تم تطبيق الخصم بنجاح! وفرت ${discountAmount} جنيه`;
+      couponMessage.className = "text-sm text-green-600";
+      couponMessage.classList.remove("hidden");
+
+      // تعطيل حقل الكوبون والزر
+      document.getElementById("couponCode").disabled = true;
+      applyCouponBtn.innerHTML = '<i class="fa-solid fa-check ml-1"></i> مُطبق';
+      applyCouponBtn.disabled = true;
+      applyCouponBtn.className = "bg-green-600 text-white px-4 py-3 rounded-lg font-semibold";
+
+    } else {
+      couponMessage.textContent = validation.message;
+      couponMessage.className = "text-sm text-red-500";
+      couponMessage.classList.remove("hidden");
+
+      applyCouponBtn.innerHTML = '<i class="fa-solid fa-check ml-1"></i> تطبيق';
+      applyCouponBtn.disabled = false;
+    }
+  });
+
+  // إعادة تعيين الكوبون
+  function resetCoupon() {
+    appliedCoupon = null;
+    calculateTotalPrice(); // إعادة حساب السعر بدون خصم
+
+    document.getElementById("couponCode").value = "";
+    document.getElementById("couponCode").disabled = false;
+    document.getElementById("couponMessage").classList.add("hidden");
+
+    const applyCouponBtn = document.getElementById("applyCouponBtn");
+    applyCouponBtn.innerHTML = '<i class="fa-solid fa-check ml-1"></i> تطبيق';
+    applyCouponBtn.disabled = false;
+    applyCouponBtn.className = "bg-purple-600 hover:bg-purple-700 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center gap-2";
+  }
+
+  // اختبار الاتصال بقاعدة البيانات
+  async function testDatabaseConnection() {
+    try {
+      console.log("🔍 اختبار الاتصال بقاعدة البيانات...");
+      const testQuery = query(collection(db, "orders"));
+      await getDocs(testQuery);
+      console.log("✅ الاتصال بقاعدة البيانات يعمل بشكل صحيح");
+    } catch (error) {
+      console.error("❌ خطأ في الاتصال بقاعدة البيانات:", error);
+      console.error("تفاصيل الخطأ:", error.message);
+    }
+  }
+
+  // تحديث عرض الأسعار عند تحميل الصفحة
+  calculateTotalPrice();
+
+  // اختبار قاعدة البيانات
+  testDatabaseConnection();
+
+  // تسجيل زيارة الصفحة (حل بديل)
+  async function trackPageVisit() {
+    try {
+      // محاولة تسجيل الزيارة في مجموعة الزوار
+      await addDoc(collection(db, "visitors"), {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        referrer: document.referrer || 'direct',
+        action: 'page_visit',
+        page: 'index',
+        screenResolution: `${screen.width}x${screen.height}`,
+        language: navigator.language,
+        platform: navigator.platform
+      });
+      console.log("📊 تم تسجيل زيارة الصفحة");
+    } catch (error) {
+      console.warn("⚠️ لا يمكن تسجيل زيارة الصفحة في مجموعة منفصلة");
+      // الحل البديل سيعتمد على الطلبات لحساب الزوار
+    }
+  }
+
+  // تسجيل زيارة الصفحة
+  trackPageVisit();
+
+  // دالة إرسال إشعار واتساب للأدمن
+async function sendWhatsAppNotification(order) {
+    try {
+      const message = `🔔 طلب جديد من AQRAB!
+
+👤 العميل: ${order.name}
+📱 الهاتف: ${order.phone}
+📍 العنوان: ${order.address}
+📦 المنتج: ${order.product}
+🔢 الكمية: ${order.quantity}
+📅 التاريخ: ${new Date().toLocaleString('ar-EG')}
+
+✅ يرجى متابعة الطلب في لوحة التحكم`;
+
+      const encodedMessage = encodeURIComponent(message);
+      const apiUrl = `https://api.callmebot.com/whatsapp.php?phone=201026897739&text=${encodedMessage}&apikey=5722213`;
+
+      const response = await fetch(apiUrl);
+
+      if (response.ok) {
+        console.log("✅ تم إرسال إشعار واتساب بنجاح");
+      } else {
+        console.error("❌ فشل في إرسال إشعار واتساب");
+      }
+    } catch (error) {
+      console.error("خطأ في إرسال إشعار واتساب:", error);
+    }
+  }
+  // دالة إرسال رسالة تأكيد للعميل - معطلة
+  async function sendCustomerConfirmation(order) {
+    // تم تعطيل إرسال رسائل واتساب
+    console.log("تم تعطيل إرسال رسائل واتساب للعملاء");
+    return;
+  }
+
+  // دالة إظهار رسالة النجاح مع خيار التتبع
+  function showSuccessWithTracking(customerPhone) {
+    // إظهار رسالة النجاح
+    document.getElementById("successMessage").classList.remove("hidden");
+
+    // حفظ رقم الهاتف للتتبع
+    sessionStorage.setItem('customerPhone', customerPhone);
+
+    // إغلاق تلقائي بعد 10 ثوان (وقت أطول لإعطاء فرصة للتتبع)
+    setTimeout(() => {
+      document.getElementById("successMessage").classList.add("hidden");
+    }, 10000);
+  }
+
+  // إغلاق رسالة النجاح
+  document.getElementById("closeSuccessBtn").addEventListener("click", () => {
+    document.getElementById("successMessage").classList.add("hidden");
+  });
+
+  // الانتقال لصفحة التتبع
+  document.getElementById("trackOrderBtn").addEventListener("click", () => {
+    const customerPhone = sessionStorage.getItem('customerPhone');
+    if (customerPhone) {
+      // الانتقال لصفحة التتبع مع الرقم
+      window.location.href = `track-order.html?phone=${encodeURIComponent(customerPhone)}`;
+    } else {
+      // في حالة عدم وجود الرقم، الانتقال العادي
+      window.location.href = 'track-order.html';
+    }
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+  sendBtn.addEventListener("click", async () => {
+    console.log("🚀 بدء عملية إرسال الطلب...");
+
+    // مسح رسائل الخطأ السابقة
+    statusMsg.innerHTML = '';
+    statusMsg.classList.remove("text-red-500", "text-green-600");
+
+    // تعطيل الزر أثناء المعالجة
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin ml-1"></i> جاري الإرسال...';
+
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const quantity = parseInt(document.getElementById("quantity").value.trim()) || 1;
+
+    console.log("📝 بيانات الطلب:", { name, phone, address, quantity });
+
+    // التحقق من البيانات الأساسية
+    if (!name || !phone || !address || quantity < 1) {
+      console.error("❌ بيانات ناقصة:", {
+        name: name || "فارغ",
+        phone: phone || "فارغ",
+        address: address || "فارغ",
+        quantity: quantity || "فارغ"
+      });
+      statusMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation ml-1"></i> يرجى ملء جميع الحقول بشكل صحيح';
+      statusMsg.classList.add("text-red-500");
+
+      // إعادة تفعيل الزر
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> إرسال الطلب';
+      return;
+    }
+
+    // تنظيف رقم الهاتف وإضافة 0 إذا كان مفقود
+    let cleanPhone = phone.replace(/\s+/g, ''); // إزالة المسافات
+    if (cleanPhone.length === 10 && /^[1-9]/.test(cleanPhone)) {
+      cleanPhone = '0' + cleanPhone; // إضافة 0 في البداية
+      console.log("🔧 تم إضافة 0 للرقم:", cleanPhone);
+    }
+
+    // التحقق من صحة رقم الهاتف المصري
+    const phoneRegex = /^(010|011|012|015)[0-9]{8}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      console.error("❌ رقم هاتف غير صحيح:", cleanPhone);
+      console.log("📱 الرقم المدخل:", cleanPhone, "الطول:", cleanPhone.length);
+
+      let errorMessage = 'يرجى إدخال رقم هاتف مصري صحيح';
+      if (cleanPhone.length !== 11) {
+        errorMessage += ` (يجب أن يكون 11 رقم، الحالي: ${cleanPhone.length})`;
+      } else if (!/^(010|011|012|015)/.test(cleanPhone)) {
+        errorMessage += ' (يجب أن يبدأ بـ 010 أو 011 أو 012 أو 015)';
+      }
+
+      statusMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation ml-1"></i> ${errorMessage}`;
+      statusMsg.classList.add("text-red-500");
+
+      // إعادة تفعيل الزر
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> إرسال الطلب';
+      return;
+    }
+
+    console.log("✅ رقم الهاتف صحيح:", cleanPhone);
+
+    // استخدام الرقم المنظف
+    const finalPhone = cleanPhone;
+
+    try {
+      const orderData = {
+        product: "ساعة كربون أسود — أرقام عربية",
+        name,
+        phone: "+2" + finalPhone,
+        address,
+        quantity: parseInt(quantity),
+        unitPrice: unitPrice, // سعر القطعة الواحدة
+        totalBeforeDiscount: totalBeforeDiscount, // السعر الإجمالي قبل الخصم
+        price: finalPrice, // السعر النهائي بعد الخصم
+        date: new Date().toISOString(),
+        status: "pending", // الحالة الافتراضية
+        couponCode: appliedCoupon ? appliedCoupon.code : "", // الكوبون المستخدم أو فارغ
+        discountApplied: discountAmount // القيمة المخصومة فعلياً
+      };
+
+      console.log("💾 حفظ الطلب في Firebase:", orderData);
+      const docRef = await addDoc(collection(db, "orders"), orderData);
+      console.log("✅ تم حفظ الطلب بنجاح. معرف الطلب:", docRef.id);
+
+      // محاولة إضافة زائر جديد (مع حل بديل)
+      try {
+        await addDoc(collection(db, "visitors"), {
+          phone: finalPhone,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          referrer: document.referrer || 'direct',
+          action: 'order_placed'
+        });
+        console.log("📊 تم تسجيل زائر جديد");
+      } catch (visitorError) {
+        console.warn("⚠️ لا يمكن تسجيل الزائر في مجموعة منفصلة");
+
+        // حل بديل: إضافة معلومات الزائر للطلب نفسه
+        try {
+          const visitorData = {
+            userAgent: navigator.userAgent,
+            referrer: document.referrer || 'direct',
+            timestamp: new Date().toISOString(),
+            screenResolution: `${screen.width}x${screen.height}`,
+            language: navigator.language,
+            platform: navigator.platform
+          };
+
+          // تحديث الطلب بمعلومات الزائر
+          await updateDoc(docRef, {
+            visitorInfo: visitorData
+          });
+
+          console.log("📊 تم حفظ معلومات الزائر مع الطلب كحل بديل");
+        } catch (updateError) {
+          console.warn("⚠️ لا يمكن حفظ معلومات الزائر:", updateError.message);
+        }
+      }
+
+      // إرسال إشعار واتساب للأدمن
+      console.log("📱 إرسال إشعار واتساب للأدمن...");
+      try {
+        await sendWhatsAppNotification({
+          name,
+          phone: "+20" + finalPhone,
+          address,
+          product: "ساعة كربون أسود — أرقام عربية",
+          quantity
+        });
+        console.log("✅ تم إرسال إشعار الأدمن بنجاح");
+      } catch (error) {
+        console.warn("⚠️ فشل في إرسال إشعار الأدمن:", error);
+      }
+
+      // إرسال رسالة تأكيد للعميل
+      console.log("📱 إرسال رسالة تأكيد للعميل...");
+      try {
+        await sendCustomerConfirmation({
+          name,
+          phone: "+20" + finalPhone,
+          product: "ساعة كربون أسود — أرقام عربية",
+          quantity
+        });
+        console.log("✅ تم إرسال رسالة العميل بنجاح");
+      } catch (error) {
+        console.warn("⚠️ فشل في إرسال رسالة العميل:", error);
+      }
+
+      // إخفاء النافذة المنبثقة
+      popup.classList.add("hidden");
+
+      // إظهار رسالة النجاح مع خيار التتبع
+      console.log("🎉 إظهار رسالة النجاح");
+      showSuccessWithTracking(finalPhone);
+
+      // مسح النموذج
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("address").value = "";
+      document.getElementById("quantity").value = "1";
+
+      // إعادة تعيين الكوبون
+      resetCoupon();
+
+      // إعادة تفعيل الزر
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> إرسال الطلب';
+
+      console.log("✅ تم إكمال عملية الطلب بنجاح");
+    } catch (error) {
+      console.error("❌ خطأ في إرسال الطلب:", error);
+      console.error("تفاصيل الخطأ:", error.message);
+      console.error("كود الخطأ:", error.code);
+
+      // إخفاء النافذة المنبثقة
+      popup.classList.add("hidden");
+
+      // تحديد نوع الخطأ وإظهار رسالة مناسبة
+      let errorMessage = "حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى";
+
+      if (error.code === 'permission-denied') {
+        errorMessage = "لا توجد صلاحيات كافية. يرجى التحقق من إعدادات Firebase";
+      } else if (error.code === 'unavailable') {
+        errorMessage = "الخدمة غير متاحة حالياً. يرجى المحاولة لاحقاً";
+      } else if (error.message.includes('network')) {
+        errorMessage = "مشكلة في الاتصال بالإنترنت. يرجى التحقق من الاتصال";
+      }
+
+      // إظهار رسالة خطأ
+      statusMsg.innerHTML = `<i class="fa-solid fa-circle-xmark ml-1"></i> ${errorMessage}`;
+      statusMsg.classList.add("text-red-500");
+      statusMsg.classList.remove("text-green-600");
+
+      // إعادة تفعيل الزر
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> إرسال الطلب';
+
+      // إخفاء رسالة الخطأ بعد 8 ثوان
+      setTimeout(() => {
+        statusMsg.innerHTML = '';
+        statusMsg.classList.remove("text-red-500");
+      }, 8000);
+    }
+  });
+
+  // تغيير الصور
+  const mainImage = document.getElementById('mainImage');
+  document.querySelectorAll('.thumb').forEach(img => {
+    img.addEventListener('click', () => {
+      mainImage.src = img.src;
+    });
+  });
+
+  // زر المفضلة
+  let isFavorite = localStorage.getItem('favorite_watch') === 'true';
+  const favoriteBtn = document.getElementById('addToFavorites');
+
+  function updateFavoriteButton() {
+    if (isFavorite) {
+      favoriteBtn.innerHTML = '<i class="fa-solid fa-heart text-red-500"></i> تمت الإضافة للمفضلة';
+      favoriteBtn.className = 'flex-1 border-2 border-red-500 bg-red-50 text-red-500 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2';
+    } else {
+      favoriteBtn.innerHTML = '<i class="fa-regular fa-heart"></i> إضافة للمفضلة';
+      favoriteBtn.className = 'flex-1 border-2 border-gray-300 hover:border-red-500 text-gray-700 hover:text-red-500 py-3 px-6 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2';
+    }
+  }
+
+  favoriteBtn.addEventListener('click', () => {
+    isFavorite = !isFavorite;
+    localStorage.setItem('favorite_watch', isFavorite);
+    updateFavoriteButton();
+
+    // إظهار رسالة
+    const message = isFavorite ? 'تمت إضافة المنتج للمفضلة! ❤️' : 'تم إزالة المنتج من المفضلة';
+    showNotification(message, isFavorite ? 'success' : 'info');
+  });
+
+  // تحديث حالة الزر عند التحميل
+  updateFavoriteButton();
+
+  // زر المشاركة
+  document.getElementById('shareProduct').addEventListener('click', () => {
+    const productData = {
+      title: 'ساعة كربون أسود — أرقام عربية',
+      text: 'ساعة فاخرة بتصميم كربون أسود أنيق، أرقام عربية واضحة، مقاومة للماء',
+      url: window.location.href
+    };
+
+    // التحقق من دعم Web Share API
+    if (navigator.share) {
+      navigator.share(productData)
+        .then(() => showNotification('تم مشاركة المنتج بنجاح! 📤', 'success'))
+        .catch((error) => {
+          console.log('خطأ في المشاركة:', error);
+          fallbackShare();
+        });
+    } else {
+      fallbackShare();
+    }
+  });
+
+  // مشاركة بديلة للمتصفحات التي لا تدعم Web Share API
+  function fallbackShare() {
+    const shareData = {
+      title: 'ساعة كربون أسود — أرقام عربية',
+      text: `ساعة فاخرة بتصميم كربون أسود أنيق، أرقام عربية واضحة، مقاومة للماء - السعر: ${unitPrice} جنيه`,
+      url: window.location.href
+    };
+
+    // إنشاء نافذة مشاركة مخصصة
+    const shareModal = document.createElement('div');
+    shareModal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+    shareModal.innerHTML = `
+      <div class="bg-white rounded-2xl p-6 max-w-md w-full">
+        <h3 class="text-xl font-bold mb-4 text-center">مشاركة المنتج</h3>
+        <div class="space-y-3">
+          <button onclick="shareToWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl font-medium transition flex items-center justify-center gap-2">
+            <i class="fa-brands fa-whatsapp text-xl"></i>
+            مشاركة عبر واتساب
+          </button>
+          <button onclick="shareToFacebook()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl font-medium transition flex items-center justify-center gap-2">
+            <i class="fa-brands fa-facebook text-xl"></i>
+            مشاركة عبر فيسبوك
+          </button>
+          <button onclick="copyLink()" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl font-medium transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-copy text-xl"></i>
+            نسخ الرابط
+          </button>
+          <button onclick="closeShareModal()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-4 rounded-xl font-medium transition">
+            إغلاق
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(shareModal);
+
+    // إضافة دوال المشاركة للنافذة العامة
+    window.shareToWhatsApp = () => {
+      const text = encodeURIComponent(`${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`);
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+      closeShareModal();
+    };
+
+    window.shareToFacebook = () => {
+      const url = encodeURIComponent(shareData.url);
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+      closeShareModal();
+    };
+
+    window.copyLink = () => {
+      navigator.clipboard.writeText(shareData.url).then(() => {
+        showNotification('تم نسخ الرابط! 📋', 'success');
+        closeShareModal();
+      }).catch(() => {
+        // fallback للمتصفحات القديمة
+        const textArea = document.createElement('textarea');
+        textArea.value = shareData.url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification('تم نسخ الرابط! 📋', 'success');
+        closeShareModal();
+      });
+    };
+
+    window.closeShareModal = () => {
+      document.body.removeChild(shareModal);
+    };
+  }
+
+  // دالة إظهار الإشعارات
+  function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+
+    notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    // إظهار الإشعار
+    setTimeout(() => {
+      notification.classList.remove('translate-x-full');
+    }, 100);
+
+    // إخفاء الإشعار بعد 3 ثوان
+    setTimeout(() => {
+      notification.classList.add('translate-x-full');
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, 3000);
+  }
+
+  // تحديث السنة في الفوتر
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // دالة تسجيل الزائر
+  async function recordVisitor() {
+    try {
+      // إنشاء معرف فريد للزائر باستخدام localStorage
+      let visitorId = localStorage.getItem('visitorId');
+
+      if (!visitorId) {
+        // إنشاء معرف جديد للزائر
+        visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('visitorId', visitorId);
+
+        // تسجيل الزائر الجديد في قاعدة البيانات
+        await addDoc(collection(db, "visitors"), {
+          visitorId: visitorId,
+          firstVisit: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          language: navigator.language,
+          timestamp: new Date()
+        });
+
+        console.log("تم تسجيل زائر جديد:", visitorId);
+      } else {
+        // تحديث آخر زيارة للزائر الموجود
+        const q = query(collection(db, "visitors"), where("visitorId", "==", visitorId));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const docRef = querySnapshot.docs[0].ref;
+          await updateDoc(docRef, {
+            lastVisit: new Date().toISOString(),
+            visitCount: increment(1)
+          });
+        }
+      }
+    } catch (error) {
+      console.error("خطأ في تسجيل الزائر:", error);
+    }
+  }
+
+  // تسجيل الزائر عند تحميل الصفحة
+  recordVisitor();
+
+</script>
+
+
+
+      <!-- إشعار -->
+      <p id="notification" class="text-black font-medium hidden">
+        <i class="fa-solid fa-circle-check ml-1"></i> تم إضافة المنتج إلى السلة!
+      </p>
+
+        <!-- مواصفات -->
+        <div class="bg-white border border-gray-200 rounded-2xl p-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-star text-yellow-500"></i>
+            المواصفات
+          </h3>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
+              <span class="text-gray-700 font-medium">مادة الإطار: كربون فاخر</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
+              <span class="text-gray-700 font-medium">أرقام عربية واضحة</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
+              <span class="text-gray-700 font-medium">مقاومة للماء 50 متر</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+              <i class="fa-solid fa-circle-check text-green-600 text-lg"></i>
+              <span class="text-gray-700 font-medium">ضمان سنة كاملة</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- شحن -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+          <div class="flex items-start gap-4">
+            <div class="bg-blue-100 p-3 rounded-full">
+              <i class="fa-solid fa-truck text-blue-600 text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-gray-900 mb-2">معلومات الشحن والتوصيل</h4>
+              <ul class="space-y-2 text-gray-700">
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-clock text-blue-600"></i>
+                  <span>التوصيل خلال 2-3 أيام عمل</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-money-bill text-green-600"></i>
+                  <span>الدفع عند الاستلام</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-shipping-fast text-purple-600"></i>
+                  <span>سعر الشحن يتم احتسابه والتأكيد عليه بعد مراجعة العنوان بناءً على أسعار إيزي بوكس</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-undo text-orange-600"></i>
+                  <span>إمكانية الإرجاع خلال 14 يوم</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <style>
+  /* الكرة العائمة */
+  #chat-ball {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #000000, #333333);
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    z-index: 9999;
+    transition: transform 0.2s ease;
+    text-decoration: none;
+    position: fixed;
+  }
+
+  #chat-ball:hover {
+    transform: scale(1.2);
+  }
+</style>
+
+<!-- الكرة العائمة -->
+<div id="chat-ball-container">
+  <a href="https://3qrabchat.streamlit.app/" target="_blank" id="chat-ball">💬</a>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const chatBall = document.getElementById("chat-ball");
+    let isDragging = false, offsetX, offsetY;
+
+    chatBall.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - chatBall.getBoundingClientRect().left;
+      offsetY = e.clientY - chatBall.getBoundingClientRect().top;
+      e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        chatBall.style.left = e.clientX - offsetX + "px";
+        chatBall.style.top = e.clientY - offsetY + "px";
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+  });
+</script>
+
+  </main>
+
+  <!-- فوتر -->
+  <footer class="bg-gradient-to-r from-gray-900 to-black text-white mt-16">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+      <div class="grid lg:grid-cols-3 gap-8 mb-8">
+        <div>
+          <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-clock text-yellow-400"></i>
+            AQRAB
+          </h3>
+          <p class="text-gray-300 text-lg leading-relaxed mb-6">متجرك الموثوق للساعات الفاخرة والإكسسوارات العصرية. نقدم أفضل المنتجات بأعلى جودة وأفضل الأسعار.</p>
+        </div>
+
+        <div>
+          <h4 class="text-xl font-bold mb-4 text-yellow-400">روابط سريعة</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2"><i class="fa-solid fa-chevron-left text-xs"></i> الرئيسية</a></li>
+            <li><a href="track-order.html" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2"><i class="fa-solid fa-chevron-left text-xs"></i> تتبع الطلب</a></li>
+            <li><a href="admin.html" class="text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2"><i class="fa-solid fa-chevron-left text-xs"></i> لوحة التحكم</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xl font-bold mb-4 text-yellow-400">تواصل معنا</h4>
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                <i class="fa-brands fa-whatsapp text-sm"></i>
+              </div>
+              <span class="text-gray-300">01026897739</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                <i class="fa-regular fa-envelope text-sm"></i>
+              </div>
+              <span class="text-gray-300">ehab.hussein.dev@gmail.com</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-700 pt-8 text-center">
+        <p class="text-gray-400">
+          © <span id="y"></span> AQRAB. جميع الحقوق محفوظة.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+
+ 
+</body>
+</html>

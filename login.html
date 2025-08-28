@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول - AQRAB Admin</title>
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌚</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // إخفاء تحذيرات Tailwind CSS في الكونسول
+    tailwind.config = {
+      corePlugins: {
+        preflight: false,
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+
+    body {
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .input-focus {
+      transition: all 0.3s ease;
+    }
+
+    .input-focus:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .slide-in {
+      animation: slideIn 0.8s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Spinner Animation */
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid #ffffff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .fade-out {
+      animation: fadeOut 0.5s ease-out;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+
+  <!-- Loading Spinner -->
+  <div id="loader" class="fixed inset-0 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center z-50">
+    <div class="text-center">
+      <div class="spinner mx-auto mb-4"></div>
+      <h2 class="text-white text-xl font-semibold mb-2">جاري التحميل...</h2>
+      <p class="text-white/80 text-sm">يتم التحقق من حالة تسجيل الدخول</p>
+    </div>
+  </div>
+
+  <!-- Login Form -->
+  <div id="loginForm" class="glass-effect rounded-2xl p-8 w-full max-w-md shadow-2xl hidden">
+    <div class="text-center mb-8">
+      <div class="text-6xl mb-4">⌚</div>
+      <h1 class="text-3xl font-bold text-white mb-2">AQRAB Admin</h1>
+      <p class="text-white/80">مرحباً بك في لوحة التحكم</p>
+    </div>
+
+    <form onsubmit="login(event)" class="space-y-6">
+      <div>
+        <label class="block text-white/90 text-sm font-medium mb-2">البريد الإلكتروني</label>
+        <input
+          id="email"
+          type="email"
+          required
+          class="input-focus w-full p-4 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+          placeholder="example@mail.com"
+        >
+      </div>
+
+      <div>
+        <label class="block text-white/90 text-sm font-medium mb-2">كلمة المرور</label>
+        <input
+          id="password"
+          type="password"
+          required
+          class="input-focus w-full p-4 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent"
+          placeholder="••••••••"
+        >
+      </div>
+
+      <button
+        type="submit"
+        id="loginBtn"
+        class="w-full bg-white text-purple-600 p-4 rounded-xl font-bold text-lg hover:bg-white/90 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/30"
+      >
+        <span id="loginBtnText">تسجيل الدخول</span>
+        <div id="loginBtnSpinner" class="hidden inline-block w-5 h-5 border-2 border-purple-600/30 border-t-purple-600 rounded-full animate-spin ml-2"></div>
+      </button>
+    </form>
+
+    <div id="error" class="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-200 text-sm text-center hidden"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeFqpa8MtVF5r3kKLfYZdM3EgPZCs3zeI",
+      authDomain: "zamman-admin.firebaseapp.com",
+      projectId: "zamman-admin",
+      storageBucket: "zamman-admin.firebasestorage.app",
+      messagingSenderId: "910842307850",
+      appId: "1:910842307850:web:b7548b7a3323e1a19046f3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const loader = document.getElementById('loader');
+    const loginForm = document.getElementById('loginForm');
+    const errorElement = document.getElementById('error');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginBtnText = document.getElementById('loginBtnText');
+    const loginBtnSpinner = document.getElementById('loginBtnSpinner');
+
+    // التحقق من حالة المستخدم
+    onAuthStateChanged(auth, (user) => {
+      setTimeout(() => {
+        if (user) {
+          // المستخدم مسجل دخول - توجيه إلى admin.html
+          window.location.href = "admin.html";
+        } else {
+          // المستخدم غير مسجل دخول - إخفاء اللودر وإظهار الفورم
+          loader.classList.add('fade-out');
+          setTimeout(() => {
+            loader.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            loginForm.classList.add('slide-in');
+          }, 500);
+        }
+      }, 1200); // إظهار اللودر لمدة ثانية وخمس على الأقل
+    });
+
+    // دالة تسجيل الدخول
+    window.login = async function(event) {
+      event.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // إخفاء رسالة الخطأ السابقة
+      errorElement.classList.add('hidden');
+
+      if (!email || !password) {
+        showError("❌ الرجاء إدخال البريد الإلكتروني وكلمة المرور");
+        return;
+      }
+
+      // إظهار حالة التحميل
+      setLoadingState(true);
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // سيتم التوجيه تلقائياً عبر onAuthStateChanged
+      } catch (error) {
+        console.error(error);
+        setLoadingState(false);
+
+        let errorMessage = "❌ حدث خطأ في تسجيل الدخول";
+
+        switch (error.code) {
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+          case 'auth/invalid-credential':
+            errorMessage = "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة";
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = "❌ تم تجاوز عدد المحاولات المسموح. حاول مرة أخرى لاحقاً";
+            break;
+          case 'auth/network-request-failed':
+            errorMessage = "❌ تحقق من اتصال الإنترنت";
+            break;
+        }
+
+        showError(errorMessage);
+      }
+    }
+
+    function setLoadingState(loading) {
+      if (loading) {
+        loginBtn.disabled = true;
+        loginBtnText.textContent = "جاري تسجيل الدخول...";
+        loginBtnSpinner.classList.remove('hidden');
+      } else {
+        loginBtn.disabled = false;
+        loginBtnText.textContent = "تسجيل الدخول";
+        loginBtnSpinner.classList.add('hidden');
+      }
+    }
+
+    function showError(message) {
+      errorElement.textContent = message;
+      errorElement.classList.remove('hidden');
+      errorElement.classList.add('fade-in');
+    }
+  </script>
+</body>
+</html>

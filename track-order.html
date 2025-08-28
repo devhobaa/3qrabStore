@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تتبع الطلب - AQRAB</title>
+  <link rel="icon" type="image/x-icon" href="logo.ico">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+    .progress-step {
+      transition: all 0.3s ease;
+    }
+    .progress-step.active {
+      transform: scale(1.1);
+    }
+    .progress-line {
+      transition: all 0.5s ease;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-clock text-white"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-800">AQRAB</h1>
+            <p class="text-sm text-gray-600">تتبع طلبك</p>
+          </div>
+        </div>
+        <a href="index.html" class="text-gray-600 hover:text-black transition">
+          <i class="fa-solid fa-home text-lg"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Welcome Message -->
+    <div id="welcomeMessage" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-party-horn text-blue-600 text-xl"></i>
+        <div>
+          <h3 class="font-semibold text-blue-800">مرحباً بك!</h3>
+          <p class="text-sm text-blue-700">تم إرسال طلبك بنجاح. يمكنك الآن تتبع حالة طلبك أدناه.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">
+        <i class="fa-solid fa-search ml-2"></i>
+        البحث عن طلبك
+      </h2>
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <input
+            type="text"
+            id="phoneSearch"
+            placeholder="أدخل رقم الهاتف (مثال: 01012345678)"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+        <button
+          id="searchBtn"
+          class="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold transition"
+        >
+          <i class="fa-solid fa-search ml-2"></i>
+          بحث
+        </button>
+      </div>
+    </div>
+
+    <!-- Multiple Orders Selection -->
+    <div id="multipleOrders" class="hidden bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">
+        <i class="fa-solid fa-list ml-2"></i>
+        تم العثور على عدة طلبات لهذا الرقم
+      </h3>
+      <p class="text-gray-600 mb-4">يرجى اختيار الطلب الذي تريد تتبعه:</p>
+      <div id="ordersList" class="space-y-3">
+        <!-- سيتم ملء الطلبات هنا -->
+      </div>
+    </div>
+
+    <!-- Order Info Section -->
+    <div id="orderInfo" class="hidden bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">
+        <i class="fa-solid fa-info-circle ml-2"></i>
+        معلومات الطلب
+      </h3>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <p class="text-sm text-gray-600">رقم الطلب</p>
+          <p id="orderNumber" class="font-semibold text-gray-800">-</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">اسم العميل</p>
+          <p id="customerName" class="font-semibold text-gray-800">-</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">المنتج</p>
+          <p id="productName" class="font-semibold text-gray-800">-</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">الكمية</p>
+          <p id="orderQuantity" class="font-semibold text-gray-800">-</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-600">تاريخ الطلب</p>
+          <p id="orderDate" class="font-semibold text-gray-800">-</p>
+        </div>
+      </div>
+
+      <!-- أزرار الإجراءات -->
+      <div class="mt-4 pt-4 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
+        <button id="backToList" class="text-blue-600 hover:text-blue-800 text-sm font-medium transition flex items-center gap-2">
+          <i class="fa-solid fa-arrow-right"></i>
+          العودة لقائمة الطلبات
+        </button>
+        <button id="requestReturn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2">
+          <i class="fa-solid fa-undo"></i>
+          طلب إرجاع
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress Tracker -->
+    <div id="progressTracker" class="hidden bg-white rounded-lg shadow-sm p-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-6">
+        <i class="fa-solid fa-truck ml-2"></i>
+        حالة الطلب
+      </h3>
+      
+      <!-- Progress Bar -->
+      <div class="relative">
+        <!-- Progress Line -->
+        <div class="absolute top-6 right-6 left-6 h-1 bg-gray-200 rounded-full">
+          <div id="progressLine" class="progress-line h-full bg-green-500 rounded-full" style="width: 0%"></div>
+        </div>
+        
+        <!-- Progress Steps -->
+        <div class="relative flex justify-between">
+          <!-- Step 1: قيد التحضير -->
+          <div class="progress-step flex flex-col items-center" data-status="pending">
+            <div class="w-12 h-12 rounded-full border-4 border-gray-300 bg-white flex items-center justify-center mb-2">
+              <i class="fa-solid fa-clock text-gray-400"></i>
+            </div>
+            <p class="text-sm font-medium text-gray-600 text-center">قيد التحضير</p>
+          </div>
+          
+          <!-- Step 2: تم الشحن -->
+          <div class="progress-step flex flex-col items-center" data-status="shipped">
+            <div class="w-12 h-12 rounded-full border-4 border-gray-300 bg-white flex items-center justify-center mb-2">
+              <i class="fa-solid fa-box text-gray-400"></i>
+            </div>
+            <p class="text-sm font-medium text-gray-600 text-center">تم الشحن</p>
+          </div>
+          
+          <!-- Step 3: في الطريق -->
+          <div class="progress-step flex flex-col items-center" data-status="on_the_way">
+            <div class="w-12 h-12 rounded-full border-4 border-gray-300 bg-white flex items-center justify-center mb-2">
+              <i class="fa-solid fa-truck text-gray-400"></i>
+            </div>
+            <p class="text-sm font-medium text-gray-600 text-center">في الطريق</p>
+          </div>
+          
+          <!-- Step 4: تم التوصيل -->
+          <div class="progress-step flex flex-col items-center" data-status="delivered">
+            <div class="w-12 h-12 rounded-full border-4 border-gray-300 bg-white flex items-center justify-center mb-2">
+              <i class="fa-solid fa-home text-gray-400"></i>
+            </div>
+            <p class="text-sm font-medium text-gray-600 text-center">تم التوصيل</p>
+          </div>
+          
+          <!-- Step 5: تم الاستلام -->
+          <div class="progress-step flex flex-col items-center" data-status="received">
+            <div class="w-12 h-12 rounded-full border-4 border-gray-300 bg-white flex items-center justify-center mb-2">
+              <i class="fa-solid fa-check text-gray-400"></i>
+            </div>
+            <p class="text-sm font-medium text-gray-600 text-center">تم الاستلام</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Current Status Message -->
+      <div id="statusMessage" class="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div class="flex items-center gap-3">
+          <i id="statusIcon" class="fa-solid fa-info-circle text-blue-600 text-xl"></i>
+          <div>
+            <p id="statusTitle" class="font-semibold text-blue-800">حالة الطلب الحالية</p>
+            <p id="statusDescription" class="text-sm text-blue-700">يرجى البحث عن طلبك أولاً</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div id="noResults" class="hidden bg-white rounded-lg shadow-sm p-8 text-center">
+      <i class="fa-solid fa-search text-gray-400 text-4xl mb-4"></i>
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">لم يتم العثور على طلبات</h3>
+      <p class="text-gray-600">تأكد من رقم الهاتف وحاول مرة أخرى</p>
+    </div>
+  </main>
+
+  <!-- نافذة طلب الإرجاع -->
+  <div id="returnModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+      <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-undo text-red-600"></i>
+        طلب إرجاع المنتج
+      </h3>
+
+      <form id="returnForm">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">سبب الإرجاع</label>
+            <select id="returnReason" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" required>
+              <option value="">اختر سبب الإرجاع</option>
+              <option value="defective">المنتج معيب</option>
+              <option value="wrong_item">منتج خاطئ</option>
+              <option value="not_as_described">لا يطابق الوصف</option>
+              <option value="damaged">وصل تالف</option>
+              <option value="changed_mind">تغيير في الرأي</option>
+              <option value="other">أخرى</option>
+            </select>
+          </div>
+
+          <div id="otherReasonDiv" class="hidden">
+            <label class="block text-sm font-medium text-gray-700 mb-2">تفاصيل السبب</label>
+            <textarea id="otherReason" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" rows="3" placeholder="اكتب تفاصيل السبب..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">مبلغ الاسترداد المطلوب</label>
+            <input type="number" id="refundAmount" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="400" required>
+            <p class="text-xs text-gray-500 mt-1">سيتم مراجعة المبلغ من قبل الإدارة</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">تفاصيل إضافية (اختياري)</label>
+            <textarea id="additionalDetails" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500" rows="3" placeholder="أي تفاصيل إضافية تود إضافتها..."></textarea>
+          </div>
+
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <p class="text-sm text-yellow-800">
+              <i class="fa-solid fa-info-circle ml-1"></i>
+              سيتم مراجعة طلب الإرجاع والرد عليك خلال 24-48 ساعة
+            </p>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button type="button" id="cancelReturn" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg font-medium transition">
+            إلغاء
+          </button>
+          <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium transition">
+            إرسال الطلب
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t mt-12">
+    <div class="max-w-4xl mx-auto px-4 py-6 text-center">
+      <p class="text-gray-600 text-sm">
+        © 2025 AQRAB. جميع الحقوق محفوظة.
+      </p>
+    </div>
+  </footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs, onSnapshot, doc, addDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDeFqpa8MtVF5r3kKLfYZdM3EgPZCs3zeI",
+    authDomain: "zamman-admin.firebaseapp.com",
+    projectId: "zamman-admin",
+    storageBucket: "zamman-admin.firebasestorage.app",
+    messagingSenderId: "910842307850",
+    appId: "1:910842307850:web:b7548b7a3323e1a19046f3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ترجمة الحالات
+  const statusTranslations = {
+    'pending': 'قيد التحضير',
+    'shipped': 'تم الشحن',
+    'on_the_way': 'في الطريق',
+    'delivered': 'تم التوصيل',
+    'received': 'تم الاستلام'
+  };
+
+  const statusMessages = {
+    'pending': {
+      title: 'قيد التحضير',
+      description: 'طلبك قيد التحضير وسيتم شحنه قريباً',
+      icon: 'fa-clock',
+      color: 'yellow'
+    },
+    'shipped': {
+      title: 'تم الشحن',
+      description: 'تم شحن طلبك وهو في طريقه إليك',
+      icon: 'fa-box',
+      color: 'blue'
+    },
+    'on_the_way': {
+      title: 'في الطريق',
+      description: 'طلبك في الطريق إليك وسيصل قريباً',
+      icon: 'fa-truck',
+      color: 'purple'
+    },
+    'delivered': {
+      title: 'تم التوصيل',
+      description: 'تم توصيل طلبك بنجاح',
+      icon: 'fa-home',
+      color: 'green'
+    },
+    'received': {
+      title: 'تم الاستلام',
+      description: 'تم استلام الطلب بنجاح. شكراً لك!',
+      icon: 'fa-check',
+      color: 'green'
+    }
+  };
+
+  let currentOrderListener = null;
+  let allOrders = []; // لحفظ جميع الطلبات
+
+  // التحقق من وجود رقم في الرابط
+  function checkURLParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const phoneFromURL = urlParams.get('phone');
+
+    if (phoneFromURL) {
+      // إظهار رسالة الترحيب
+      document.getElementById('welcomeMessage').classList.remove('hidden');
+
+      // ملء حقل البحث بالرقم
+      document.getElementById('phoneSearch').value = phoneFromURL;
+
+      // إظهار مؤشر التحميل
+      const searchBtn = document.getElementById('searchBtn');
+      const originalText = searchBtn.innerHTML;
+      searchBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin ml-2"></i> جاري البحث...';
+      searchBtn.disabled = true;
+
+      // البحث التلقائي بعد تأخير قصير
+      setTimeout(() => {
+        searchOrder().finally(() => {
+          // إعادة تعيين الزر
+          searchBtn.innerHTML = originalText;
+          searchBtn.disabled = false;
+        });
+      }, 1000);
+
+      // إخفاء رسالة الترحيب بعد 8 ثوان
+      setTimeout(() => {
+        document.getElementById('welcomeMessage').classList.add('hidden');
+      }, 8000);
+    }
+  }
+
+  // البحث عن الطلب
+  document.getElementById('searchBtn').addEventListener('click', searchOrder);
+  document.getElementById('phoneSearch').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') searchOrder();
+  });
+
+  // تشغيل فحص الرابط عند تحميل الصفحة
+  window.addEventListener('load', checkURLParams);
+
+  // العودة لقائمة الطلبات
+  document.getElementById('backToList').addEventListener('click', () => {
+    showMultipleOrders();
+  });
+
+  async function searchOrder() {
+    const phone = document.getElementById('phoneSearch').value.trim();
+
+    if (!phone) {
+      alert('يرجى إدخال رقم الهاتف');
+      return;
+    }
+
+    // تنسيق رقم الهاتف
+    const formattedPhone = phone.startsWith('+2') ? phone : `+2${phone}`;
+
+    try {
+      const q = query(collection(db, "orders"), where("phone", "==", formattedPhone));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        showNoResults();
+        return;
+      }
+
+      // جمع جميع الطلبات
+      allOrders = [];
+      querySnapshot.forEach((doc) => {
+        allOrders.push({
+          id: doc.id,
+          data: doc.data()
+        });
+      });
+
+      // ترتيب الطلبات حسب التاريخ (الأحدث أولاً)
+      allOrders.sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
+
+      if (allOrders.length === 1) {
+        // طلب واحد فقط - عرضه مباشرة
+        displayOrder(allOrders[0].data, allOrders[0].id);
+        setupRealTimeTracking(allOrders[0].id);
+      } else {
+        // عدة طلبات - عرض القائمة للاختيار
+        showMultipleOrders();
+      }
+
+    } catch (error) {
+      console.error("خطأ في البحث:", error);
+      alert('حدث خطأ أثناء البحث');
+    }
+  }
+
+  function showMultipleOrders() {
+    const ordersList = document.getElementById('ordersList');
+    ordersList.innerHTML = '';
+
+    allOrders.forEach((orderItem, index) => {
+      const order = orderItem.data;
+      const orderDate = new Date(order.date);
+      const statusText = statusTranslations[order.status || 'pending'];
+      const statusColor = getStatusColor(order.status || 'pending');
+
+      const orderCard = document.createElement('div');
+      orderCard.className = 'border border-gray-200 rounded-lg p-4 hover:border-blue-300 cursor-pointer transition';
+      orderCard.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h4 class="font-semibold text-gray-800">${order.product || 'منتج غير محدد'}</h4>
+              <span class="px-2 py-1 text-xs rounded-full ${statusColor}">
+                ${statusText}
+              </span>
+            </div>
+            <div class="text-sm text-gray-600 space-y-1">
+              <p><i class="fa-solid fa-hashtag ml-1"></i> رقم الطلب: ${orderItem.id.substring(0, 8).toUpperCase()}</p>
+              <p><i class="fa-solid fa-calendar ml-1"></i> ${orderDate.toLocaleDateString('ar-EG', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}</p>
+              <p><i class="fa-solid fa-box ml-1"></i> الكمية: ${order.quantity || 1}</p>
+            </div>
+          </div>
+          <div class="text-blue-600">
+            <i class="fa-solid fa-chevron-left"></i>
+          </div>
+        </div>
+      `;
+
+      orderCard.addEventListener('click', () => {
+        displayOrder(order, orderItem.id);
+        setupRealTimeTracking(orderItem.id);
+      });
+
+      ordersList.appendChild(orderCard);
+    });
+
+    // إظهار قسم الطلبات المتعددة
+    document.getElementById('multipleOrders').classList.remove('hidden');
+    document.getElementById('orderInfo').classList.add('hidden');
+    document.getElementById('progressTracker').classList.add('hidden');
+    document.getElementById('noResults').classList.add('hidden');
+  }
+
+  function displayOrder(order, orderId = null) {
+    // إظهار معلومات الطلب
+    document.getElementById('orderNumber').textContent = orderId ? orderId.substring(0, 8).toUpperCase() : '-';
+    document.getElementById('customerName').textContent = order.name || '-';
+    document.getElementById('productName').textContent = order.product || '-';
+    document.getElementById('orderQuantity').textContent = order.quantity || '-';
+
+    const orderDate = new Date(order.date);
+    document.getElementById('orderDate').textContent = orderDate.toLocaleDateString('ar-EG', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    // إظهار الأقسام
+    document.getElementById('multipleOrders').classList.add('hidden');
+    document.getElementById('orderInfo').classList.remove('hidden');
+    document.getElementById('progressTracker').classList.remove('hidden');
+    document.getElementById('noResults').classList.add('hidden');
+
+    // تحديث شريط التقدم
+    updateProgressBar(order.status || 'pending');
+  }
+
+  function getStatusColor(status) {
+    const colors = {
+      'pending': 'bg-yellow-100 text-yellow-800',
+      'shipped': 'bg-blue-100 text-blue-800',
+      'on_the_way': 'bg-purple-100 text-purple-800',
+      'delivered': 'bg-green-100 text-green-800',
+      'received': 'bg-gray-100 text-gray-800'
+    };
+    return colors[status] || colors['pending'];
+  }
+
+  function setupRealTimeTracking(orderId) {
+    // إلغاء المراقبة السابقة
+    if (currentOrderListener) {
+      currentOrderListener();
+    }
+
+    // مراقبة التحديثات المباشرة
+    currentOrderListener = onSnapshot(doc(db, "orders", orderId), (doc) => {
+      if (doc.exists()) {
+        const order = doc.data();
+        updateProgressBar(order.status || 'pending');
+      }
+    });
+  }
+
+  function updateProgressBar(status) {
+    const steps = ['pending', 'shipped', 'on_the_way', 'delivered', 'received'];
+    const currentStepIndex = steps.indexOf(status);
+    
+    // تحديث الخطوات
+    steps.forEach((stepStatus, index) => {
+      const stepElement = document.querySelector(`[data-status="${stepStatus}"]`);
+      const circle = stepElement.querySelector('div');
+      const icon = stepElement.querySelector('i');
+      const text = stepElement.querySelector('p');
+      
+      if (index <= currentStepIndex) {
+        // خطوة مكتملة أو حالية
+        circle.className = 'w-12 h-12 rounded-full border-4 border-green-500 bg-green-500 flex items-center justify-center mb-2';
+        icon.className = icon.className.replace('text-gray-400', 'text-white');
+        text.className = 'text-sm font-medium text-green-600 text-center';
+        
+        if (index === currentStepIndex) {
+          stepElement.classList.add('active');
+        }
+      } else {
+        // خطوة غير مكتملة
+        circle.className = 'w-12 h-12 rounded-full border-4 border-gray-300 bg-white flex items-center justify-center mb-2';
+        icon.className = icon.className.replace('text-white', 'text-gray-400');
+        text.className = 'text-sm font-medium text-gray-600 text-center';
+        stepElement.classList.remove('active');
+      }
+    });
+    
+    // تحديث خط التقدم
+    const progressPercentage = (currentStepIndex / (steps.length - 1)) * 100;
+    document.getElementById('progressLine').style.width = `${progressPercentage}%`;
+    
+    // تحديث رسالة الحالة
+    updateStatusMessage(status);
+  }
+
+  function updateStatusMessage(status) {
+    const message = statusMessages[status];
+    const statusMessage = document.getElementById('statusMessage');
+    const statusIcon = document.getElementById('statusIcon');
+    const statusTitle = document.getElementById('statusTitle');
+    const statusDescription = document.getElementById('statusDescription');
+    
+    statusIcon.className = `fa-solid ${message.icon} text-${message.color}-600 text-xl`;
+    statusTitle.textContent = message.title;
+    statusDescription.textContent = message.description;
+    
+    statusMessage.className = `mt-8 p-4 bg-${message.color}-50 border border-${message.color}-200 rounded-lg`;
+  }
+
+  function showNoResults() {
+    document.getElementById('multipleOrders').classList.add('hidden');
+    document.getElementById('orderInfo').classList.add('hidden');
+    document.getElementById('progressTracker').classList.add('hidden');
+    document.getElementById('noResults').classList.remove('hidden');
+  }
+
+  // متغير لحفظ بيانات الطلب الحالي
+  let currentOrderData = null;
+
+  // إدارة طلب الإرجاع
+  document.getElementById('requestReturn')?.addEventListener('click', () => {
+    if (currentOrderData) {
+      document.getElementById('returnModal').classList.remove('hidden');
+    } else {
+      alert('يرجى البحث عن طلبك أولاً');
+    }
+  });
+
+  // إغلاق نافذة الإرجاع
+  document.getElementById('cancelReturn')?.addEventListener('click', () => {
+    document.getElementById('returnModal').classList.add('hidden');
+  });
+
+  // إظهار/إخفاء حقل السبب الآخر
+  document.getElementById('returnReason')?.addEventListener('change', (e) => {
+    const otherDiv = document.getElementById('otherReasonDiv');
+    if (e.target.value === 'other') {
+      otherDiv.classList.remove('hidden');
+    } else {
+      otherDiv.classList.add('hidden');
+    }
+  });
+
+  // إرسال طلب الإرجاع
+  document.getElementById('returnForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const returnReason = document.getElementById('returnReason').value;
+    const otherReason = document.getElementById('otherReason').value;
+    const refundAmount = document.getElementById('refundAmount').value;
+    const additionalDetails = document.getElementById('additionalDetails').value;
+
+    if (!currentOrderData) {
+      alert('خطأ: لا توجد بيانات طلب');
+      return;
+    }
+
+    try {
+      // إظهار حالة التحميل
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'جاري الإرسال...';
+      submitBtn.disabled = true;
+
+      // تحضير بيانات طلب الإرجاع
+      const returnData = {
+        orderId: currentOrderData.id,
+        customerName: currentOrderData.name,
+        customerPhone: currentOrderData.phone,
+        productName: currentOrderData.product || 'ساعة كربون أسود — أرقام عربية',
+        quantity: currentOrderData.quantity || 1,
+        originalPrice: currentOrderData.price || currentOrderData.totalBeforeDiscount || 400,
+        returnReason: returnReason === 'other' ? otherReason : getReasonText(returnReason),
+        additionalDetails: additionalDetails || '',
+        returnDate: new Date().toISOString(),
+        status: 'pending',
+        refundAmount: parseInt(refundAmount),
+        adminNotes: '',
+        timestamp: new Date(),
+        // معلومات إضافية للمتابعة
+        orderDate: currentOrderData.date,
+        orderStatus: currentOrderData.status
+      };
+
+      // إرسال طلب الإرجاع إلى Firebase
+      await addDoc(collection(db, "returns"), returnData);
+
+      // إرسال إشعار للأدمن
+      await sendReturnNotificationToAdmin(returnData);
+
+      // إظهار رسالة نجاح مفصلة
+      const successMessage = `✅ تم إرسال طلب الإرجاع بنجاح!
+
+📋 تفاصيل الطلب:
+• رقم الطلب: ${currentOrderData.id.substring(0, 8).toUpperCase()}
+• المبلغ المطلوب: ${refundAmount} جنيه
+• السبب: ${returnReason === 'other' ? otherReason : getReasonText(returnReason)}
+
+⏰ سيتم مراجعة طلبك والرد عليك خلال 24-48 ساعة.
+📱 ستصلك رسالة تأكيد على واتساب قريباً.
+
+شكراً لثقتك بنا! 💙`;
+
+      alert(successMessage);
+
+      // إغلاق النافذة وإعادة تعيين النموذج
+      document.getElementById('returnModal').classList.add('hidden');
+      document.getElementById('returnForm').reset();
+      document.getElementById('otherReasonDiv').classList.add('hidden');
+
+    } catch (error) {
+      console.error('خطأ في إرسال طلب الإرجاع:', error);
+      alert('حدث خطأ أثناء إرسال طلب الإرجاع. يرجى المحاولة مرة أخرى.');
+    } finally {
+      // إعادة تعيين زر الإرسال
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+  });
+
+  // دالة ترجمة أسباب الإرجاع
+  function getReasonText(reason) {
+    const reasons = {
+      'defective': 'المنتج معيب',
+      'wrong_item': 'منتج خاطئ',
+      'not_as_described': 'لا يطابق الوصف',
+      'damaged': 'وصل تالف',
+      'changed_mind': 'تغيير في الرأي'
+    };
+    return reasons[reason] || reason;
+  }
+
+  // دالة إرسال إشعار الإرجاع للأدمن
+  async function sendReturnNotificationToAdmin(returnData) {
+    try {
+      const message = `🔴 طلب إرجاع جديد من AQRAB!
+
+👤 العميل: ${returnData.customerName}
+📱 الهاتف: ${returnData.customerPhone}
+📦 المنتج: ${returnData.productName}
+🔢 الكمية: ${returnData.quantity}
+💰 المبلغ المطلوب: ${returnData.refundAmount} جنيه
+📝 السبب: ${returnData.returnReason}
+${returnData.additionalDetails ? `📋 تفاصيل إضافية: ${returnData.additionalDetails}` : ''}
+📅 تاريخ الطلب: ${new Date().toLocaleString('ar-EG')}
+
+⚠️ يرجى مراجعة الطلب في لوحة التحكم`;
+
+      const encodedMessage = encodeURIComponent(message);
+      const apiUrl = `https://api.callmebot.com/whatsapp.php?phone=201026897739&text=${encodedMessage}&apikey=5722213`;
+
+      const response = await fetch(apiUrl);
+
+      if (response.ok) {
+        console.log("✅ تم إرسال إشعار الإرجاع للأدمن بنجاح");
+      } else {
+        console.log("❌ فشل في إرسال إشعار الإرجاع للأدمن");
+      }
+    } catch (error) {
+      console.error("خطأ في إرسال إشعار الإرجاع:", error);
+    }
+  }
+
+  // تحديث دالة displayOrder لحفظ بيانات الطلب
+  const originalDisplayOrder = displayOrder;
+  displayOrder = function(order, orderId = null) {
+    currentOrderData = { ...order, id: orderId };
+    originalDisplayOrder(order, orderId);
+  };
+
+</script>
+
+</body>
+</html>

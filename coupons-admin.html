@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>إدارة الكوبونات - AQRAB</title>
+  <link rel="icon" type="image/x-icon" href="logo.ico">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Cairo', sans-serif; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- شاشة تحميل/تأكد من تسجيل الدخول -->
+  <div id="authLoader" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+    <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-600"></i>
+  </div>
+
+  <!-- المحتوى -->
+  <main class="hidden max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- Header -->
+    <header class="bg-white border-b border-black/10 sticky top-0 z-50 mb-6">
+      <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
+        <h1 class="text-3xl font-bold flex items-center gap-3">
+          <i class="fa-solid fa-ticket"></i>
+          إدارة الكوبونات
+        </h1>
+        <div class="flex items-center gap-3">
+          <a href="admin.html" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
+            <i class="fa-solid fa-arrow-right"></i>
+            العودة للطلبات
+          </a>
+          <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            تسجيل الخروج
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- إضافة كوبون جديد -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <i class="fa-solid fa-plus"></i>
+        إضافة كوبون جديد
+      </h2>
+      
+      <form id="couponForm" class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">كود الكوبون</label>
+          <input type="text" id="couponCode" placeholder="مثال: SAVE20" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">نوع الخصم</label>
+          <select id="discountType" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <option value="">اختر نوع الخصم</option>
+            <option value="percentage">نسبة مئوية (%)</option>
+            <option value="amount">مبلغ ثابت (جنيه)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">قيمة الخصم</label>
+          <input type="number" id="discountValue" placeholder="مثال: 20" min="0" step="0.01" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">تاريخ انتهاء الصلاحية</label>
+          <input type="datetime-local" id="expiryDate" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div class="md:col-span-2">
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            إضافة الكوبون
+          </button>
+        </div>
+      </form>
+      
+      <div id="couponMessage" class="mt-4 hidden"></div>
+    </div>
+
+    <!-- قائمة الكوبونات -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <i class="fa-solid fa-list"></i>
+          قائمة الكوبونات
+        </h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-black text-white">
+              <th class="py-4 px-6 text-right">كود الكوبون</th>
+              <th class="py-4 px-6 text-center">نوع الخصم</th>
+              <th class="py-4 px-6 text-center">قيمة الخصم</th>
+              <th class="py-4 px-6 text-center">تاريخ الانتهاء</th>
+              <th class="py-4 px-6 text-center">الحالة</th>
+              <th class="py-4 px-6 text-center">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="couponsTable">
+            <tr>
+              <td colspan="6" class="py-8 text-center text-gray-500">
+                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                <div>جارٍ تحميل البيانات...</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- سكربت Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, Timestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDeFqpa8MtVF5r3kKLfYZdM3EgPZCs3zeI",
+      authDomain: "zamman-admin.firebaseapp.com",
+      projectId: "zamman-admin",
+      storageBucket: "zamman-admin.firebasestorage.app",
+      messagingSenderId: "910842307850",
+      appId: "1:910842307850:web:b7548b7a3323e1a19046f3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const authLoader = document.getElementById("authLoader");
+    const mainContent = document.querySelector("main");
+
+    // تحقق من تسجيل الدخول
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login-coupons.html";
+      } else {
+        authLoader.classList.add("hidden");
+        mainContent.classList.remove("hidden");
+      }
+    });
+
+    // تسجيل الخروج
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "login-coupons.html";
+    });
+
+    // إضافة كوبون جديد
+    document.getElementById('couponForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+      const discountType = document.getElementById('discountType').value;
+      const discountValue = parseFloat(document.getElementById('discountValue').value);
+      const expiryDate = new Date(document.getElementById('expiryDate').value);
+      const messageDiv = document.getElementById('couponMessage');
+      try {
+        const q = query(collection(db, "coupons"), where("code", "==", couponCode));
+        const existingCoupons = await getDocs(q);
+        if (!existingCoupons.empty) {
+          messageDiv.innerHTML = '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">كود الكوبون موجود مسبقاً</div>';
+          messageDiv.classList.remove('hidden');
+          return;
+        }
+        await addDoc(collection(db, "coupons"), {
+          code: couponCode,
+          discountType,
+          discountValue,
+          expiryDate: Timestamp.fromDate(expiryDate),
+          createdAt: new Date()
+        });
+        messageDiv.innerHTML = '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">تم إضافة الكوبون بنجاح</div>';
+        messageDiv.classList.remove('hidden');
+        document.getElementById('couponForm').reset();
+        loadCoupons();
+        setTimeout(() => messageDiv.classList.add('hidden'), 3000);
+      } catch (error) {
+        console.error("خطأ في إضافة الكوبون:", error);
+      }
+    });
+
+    // تحميل الكوبونات
+    async function loadCoupons() {
+      const tbody = document.getElementById("couponsTable");
+      tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-gray-500"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><div>جاري التحميل...</div></td></tr>`;
+      try {
+        const querySnapshot = await getDocs(collection(db, "coupons"));
+        tbody.innerHTML = "";
+        if (querySnapshot.empty) {
+          tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-gray-500">لا توجد كوبونات</td></tr>`;
+          return;
+        }
+        const now = new Date();
+        querySnapshot.forEach((docSnap) => {
+          const coupon = docSnap.data();
+          const expiryDate = coupon.expiryDate.toDate();
+          const isExpired = now > expiryDate;
+          tbody.innerHTML += `
+            <tr class="border-b hover:bg-gray-50">
+              <td class="py-4 px-6">${coupon.code}</td>
+              <td class="py-4 px-6 text-center">${coupon.discountType === 'percentage' ? 'نسبة مئوية' : 'مبلغ ثابت'}</td>
+              <td class="py-4 px-6 text-center">${coupon.discountType === 'percentage' ? coupon.discountValue+'%' : coupon.discountValue+' جنيه'}</td>
+              <td class="py-4 px-6 text-center">${expiryDate.toLocaleDateString('ar-EG',{year:'numeric',month:'short',day:'numeric'})}</td>
+              <td class="py-4 px-6 text-center">${isExpired ? '<span class="text-red-600">منتهي</span>' : '<span class="text-green-600">نشط</span>'}</td>
+              <td class="py-4 px-6 text-center">
+                <button onclick="deleteCoupon('${docSnap.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">حذف</button>
+              </td>
+            </tr>`;
+        });
+      } catch (err) {
+        console.error("خطأ:", err);
+      }
+    }
+
+    // حذف كوبون
+    window.deleteCoupon = async function(couponId) {
+      if (confirm("هل تريد حذف الكوبون؟")) {
+        await deleteDoc(doc(db, "coupons", couponId));
+        loadCoupons();
+      }
+    }
+
+    loadCoupons();
+  </script>
+</body>
+</html>
